@@ -11,6 +11,10 @@
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
+    <!-- Bibliotecas pdfmake -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.9/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.9/vfs_fonts.min.js"></script>
+
     <style>
         body { 
             background-color: #060e1f; 
@@ -97,6 +101,7 @@
 
             const [analysis, setAnalysis] = useState(null);
             const [autoFilled, setAutoFilled] = useState(true);
+            const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
             const classesConsumo = [
                 { id: 'Comercial', label: 'Comercial / Serviços', icon: <Building2 className="w-4 h-4" /> },
@@ -303,6 +308,96 @@
                 return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value || 0);
             };
 
+             // FUNÇÃO PARA GERAR O PDF
+            const handleGeneratePDF = () => {
+                if (!analysis) return;
+                setIsGeneratingPDF(true);
+
+                // Configuração das Cores Baseadas no Tema
+                const cores = {
+                    primaria: '#10b981', // Emerald 500
+                    textoEscuro: '#1e293b',
+                    textoClaro: '#64748b',
+                    perigo: '#ef4444',
+                    alerta: '#f59e0b',
+                    info: '#3b82f6'
+                };
+
+                // Formatando os Alertas para o PDF
+                const pdfAlerts = analysis.alerts.map(alert => {
+                    let alertColor = cores.primaria;
+                    if(alert.type === 'danger') alertColor = cores.perigo;
+                    if(alert.type === 'warning') alertColor = cores.alerta;
+                    if(alert.type === 'info') alertColor = cores.info;
+
+                    return [
+                        { text: alert.title, bold: true, color: alertColor, margin: [0, 10, 0, 5], fontSize: 13 },
+                        { text: alert.message, fontSize: 11, color: cores.textoEscuro, margin: [0, 0, 0, 10] }
+                    ];
+                });
+
+                // Definição da Estrutura do Documento PDF
+                const docDefinition = {
+                    pageSize: 'A4',
+                    pageMargins: [ 40, 60, 40, 60 ],
+                    content: [
+                        // Cabeçalho
+                        { text: 'ENGER Analytics', fontSize: 28, bold: true, color: cores.primaria, alignment: 'center', margin: [0, 0, 0, 5] },
+                        { text: 'Proposta Comercial - Estudo Tarifário e Eficiência', fontSize: 14, color: cores.textoClaro, alignment: 'center', margin: [0, 0, 0, 30] },
+                        
+                        // Seção 1: Enquadramento
+                        { text: '1. Perfil e Enquadramento do Cliente', fontSize: 16, bold: true, color: cores.textoEscuro, margin: [0, 0, 0, 10] },
+                        {
+                            layout: 'lightHorizontalLines',
+                            table: {
+                                headerRows: 0,
+                                widths: [ '*', '*' ],
+                                body: [
+                                    [ { text: 'Concessionária:', bold: true }, analysis.concessionaria ],
+                                    [ { text: 'Classe de Consumo:', bold: true }, analysis.classeConsumo ],
+                                    [ { text: 'Grupo Tarifário:', bold: true }, `Grupo ${analysis.grupoTarifario} ${analysis.grupoTarifario === 'A' ? `(Tarifa ${analysis.modalidadeTarifaria})` : '(Baixa Tensão)'}` ],
+                                    [ { text: 'Consumo Mensal Ativo:', bold: true }, `${formData.consumoAtivo} kWh` ],
+                                ]
+                            },
+                            margin: [0, 0, 0, 20]
+                        },
+
+                        // Seção 2: Financeiro
+                        { text: '2. Diagnóstico Financeiro Mensal', fontSize: 16, bold: true, color: cores.textoEscuro, margin: [0, 0, 0, 10] },
+                        {
+                            layout: 'lightHorizontalLines',
+                            table: {
+                                widths: [ '*', '*' ],
+                                body: [
+                                    [ { text: 'Valor Estimado da Fatura Atual:', bold: true }, { text: formatCurrency(analysis.custoTotal), fontSize: 14, bold: true } ],
+                                    [ { text: 'Custo com Demanda/Multas (Desperdício):', bold: true, color: cores.perigo }, { text: formatCurrency(analysis.potencialEconomia), color: cores.perigo, bold: true } ],
+                                    [ { text: 'Economia Estimada c/ Usina Solar (Aprox.):', bold: true, color: cores.primaria }, { text: formatCurrency(analysis.economiaSolar), color: cores.primaria, bold: true } ],
+                                    [ { text: 'Economia Estimada c/ GD Compartilhada:', bold: true, color: cores.info }, { text: formatCurrency(analysis.economiaGDCompartilhada), color: cores.info, bold: true } ]
+                                ]
+                            },
+                            margin: [0, 0, 0, 30]
+                        },
+
+                        // Seção 3: Insights
+                        { text: '3. Insights e Oportunidades Identificadas', fontSize: 16, bold: true, color: cores.textoEscuro, margin: [0, 0, 0, 10] },
+                        ...pdfAlerts,
+
+                        // Rodapé
+                        { text: '\n\n\n' },
+                        { text: 'Este documento é uma estimativa gerada automaticamente pelo motor de inteligência ENGER Analytics v3.0.', fontSize: 9, color: cores.textoClaro, alignment: 'center', italics: true },
+                        { text: 'Valores baseados nas resoluções normativas 1.000/2021 (ANEEL).', fontSize: 9, color: cores.textoClaro, alignment: 'center', italics: true }
+                    ],
+                    defaultStyle: {
+                        font: 'Roboto'
+                    }
+                };
+
+                // Gera o Arquivo PDF
+                pdfMake.createPdf(docDefinition).download(`Proposta_Comercial_${analysis.concessionaria.replace(/\s+/g, '_')}.pdf`);
+                
+                setTimeout(() => setIsGeneratingPDF(false), 1000);
+            };
+            
             return (
                 <div className="min-h-screen bg-[#060e1f] text-slate-200 p-4 md:p-6 lg:p-8 font-sans selection:bg-emerald-500/30">
                     
@@ -843,10 +938,20 @@
                                         
                                         {/* CTA Action */}
                                         <div className="mt-8 pt-6 border-t border-slate-800/60">
-                                            <button className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.15)] hover:shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:-translate-y-0.5 relative overflow-hidden group">
-                                                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-white/20 to-emerald-500/0 transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                                                <FileText className="w-5 h-5 relative z-10" />
-                                                <span className="relative z-10">Exportar Proposta Comercial PDF</span>
+                                             <button 
+                                                onClick={handleGeneratePDF}
+                                                disabled={isGeneratingPDF}
+                                                className={`w-full text-white font-bold py-4 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.15)] relative overflow-hidden group ${isGeneratingPDF ? 'bg-slate-700 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-500 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:-translate-y-0.5'}`}
+                                            >
+                                                {!isGeneratingPDF && <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-white/20 to-emerald-500/0 transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>}
+                                                <FileText className={`w-5 h-5 relative z-10 ${isGeneratingPDF ? 'animate-bounce' : ''}`} />
+                                                <span className="relative z-10">
+                                                    {isGeneratingPDF ? 'Gerando PDF...' : 'Exportar Proposta Comercial PDF'}
+                                                </span>
+                                           // <button className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.15)] hover:shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:-translate-y-0.5 relative overflow-hidden group">
+                                             //   <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-white/20 to-emerald-500/0 transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                                              //  <FileText className="w-5 h-5 relative z-10" />
+                                            //    <span className="relative z-10">Exportar Proposta Comercial PDF</span>
                                             </button>
                                             <p className="text-center text-[10px] text-slate-500 mt-4 uppercase tracking-wider font-semibold">
                                                 Motor de cálculo baseado nas resoluções normativas 1.000/2021 (ANEEL)
@@ -856,8 +961,10 @@
                                 </>
                             )}
                         </div>
-
-                    </div>
+                     </div>
+                );
+            };
+         </div>
                     
                     {/* CSS Animation Keyframes inline */}
                     <style dangerouslySetInnerHTML={{__html: `
