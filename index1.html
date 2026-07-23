@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ENGER Analytics v4.0 - Pro</title>
+    <title>ENGER Analytics v3.0</title>
     
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     
-    <script crossorigin src="[https://unpkg.com/react@18/umd/react.production.min.js](https://unpkg.com/react@18/umd/react.production.min.js)"></script>
-    <script crossorigin src="[https://unpkg.com/react-dom@18/umd/react-dom.production.min.js](https://unpkg.com/react-dom@18/umd/react-dom.production.min.js)"></script>
-    <script src="[https://unpkg.com/@babel/standalone/babel.min.js](https://unpkg.com/@babel/standalone/babel.min.js)"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <!-- Recharts para Gráficos Visuais -->
-    <script src="[https://unpkg.com/prop-types/prop-types.min.js](https://unpkg.com/prop-types/prop-types.min.js)"></script>
-    <script src="[https://unpkg.com/recharts/umd/Recharts.js](https://unpkg.com/recharts/umd/Recharts.js)"></script>
+    <!-- NOVA ALTERAÇÃO 1: Bibliotecas Recharts para os gráficos animados -->
+    <script src="https://unpkg.com/prop-types/prop-types.min.js"></script>
+    <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
 
     <!-- Bibliotecas pdfmake -->
-    <script src="[https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.9/pdfmake.min.js](https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.9/pdfmake.min.js)"></script>
-    <script src="[https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.9/vfs_fonts.min.js](https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.9/vfs_fonts.min.js)"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.9/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.9/vfs_fonts.min.js"></script>
 
     <style>
         body { 
@@ -37,6 +37,8 @@
 
     <script type="text/babel">
         const { useState, useEffect } = React;
+        
+        // NOVA ALTERAÇÃO 2: Extraindo os componentes do Recharts
         const { PieChart, Pie, Cell, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer } = window.Recharts;
 
         const IconBase = ({ className, children }) => (
@@ -45,27 +47,28 @@
             </svg>
         );
 
-        // Ícones
-        const AlertCircle = ({ className }) => <IconBase className="{className}"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></IconBase>;
-        const CheckCircle2 = ({ className }) => <IconBase className="{className}"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></IconBase>;
-        const TrendingDown = ({ className }) => <IconBase className="{className}"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></IconBase>;
-        const TrendingUp = ({ className }) => <IconBase className="{className}"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></IconBase>;
-        const Zap = ({ className }) => <IconBase className="{className}"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></IconBase>;
-        const DollarSign = ({ className }) => <IconBase className="{className}"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></IconBase>;
-        const Activity = ({ className }) => <IconBase className="{className}"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></IconBase>;
-        const Settings = ({ className }) => <IconBase className="{className}"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></IconBase>;
-        const BarChart3 = ({ className }) => <IconBase className="{className}"><path d="M3 3v18h18"/><rect width="4" height="7" x="7" y="10" rx="1"/><rect width="4" height="12" x="15" y="5" rx="1"/></IconBase>;
-        const Info = ({ className }) => <IconBase className="{className}"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></IconBase>;
-        const MapPin = ({ className }) => <IconBase className="{className}"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></IconBase>;
-        const Factory = ({ className }) => <IconBase className="{className}"><path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M17 18h1"/><path d="M12 18h1"/><path d="M7 18h1"/></IconBase>;
-        const Tractor = ({ className }) => <IconBase className="{className}"><path d="m10 11 11 .9c.6 0 .9.5.8 1.1l-.8 5h-1"/><path d="M16 18h-5"/><path d="M18 5a1 1 0 0 0-1 1v5.573"/><path d="M3 4h9l1 7.246"/><path d="M4 11V4"/><path d="M7 15h.01"/><path d="M8 10.1V4"/><circle cx="18" cy="18" r="2"/><circle cx="7" cy="15" r="4"/></IconBase>;
-        const Home = ({ className }) => <IconBase className="{className}"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></IconBase>;
-        const Building2 = ({ className }) => <IconBase className="{className}"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></IconBase>;
-        const Landmark = ({ className }) => <IconBase className="{className}"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></IconBase>;
-        const FileText = ({ className }) => <IconBase className="{className}"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></IconBase>;
-        const ArrowDownRight = ({ className }) => <IconBase className="{className}"><path d="m7 7 10 10"/><path d="M17 7v10H7"/></IconBase>;
-        const Wand2 = ({ className }) => <IconBase className="{className}"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></IconBase>;
-        const Calculator = ({ className }) => <IconBase className="{className}"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16.01" y1="14" y2="14"/><line x1="12" x2="12.01" y1="14" y2="14"/><line x1="8" x2="8.01" y1="14" y2="14"/><line x1="16" x2="16.01" y1="10" y2="10"/><line x1="12" x2="12.01" y1="10" y2="10"/><line x1="8" x2="8.01" y1="10" y2="10"/><line x1="16" x2="16.01" y1="18" y2="18"/><line x1="12" x2="12.01" y1="18" y2="18"/><line x1="8" x2="8.01" y1="18" y2="18"/></IconBase>;
+        const AlertCircle = ({ className }) => <IconBase className={className}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></IconBase>;
+        const CheckCircle2 = ({ className }) => <IconBase className={className}><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></IconBase>;
+        const TrendingDown = ({ className }) => <IconBase className={className}><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></IconBase>;
+        const TrendingUp = ({ className }) => <IconBase className={className}><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></IconBase>;
+        const Zap = ({ className }) => <IconBase className={className}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></IconBase>;
+        const DollarSign = ({ className }) => <IconBase className={className}><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></IconBase>;
+        const Activity = ({ className }) => <IconBase className={className}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></IconBase>;
+        const Settings = ({ className }) => <IconBase className={className}><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></IconBase>;
+        const BarChart3 = ({ className }) => <IconBase className={className}><path d="M3 3v18h18"/><rect width="4" height="7" x="7" y="10" rx="1"/><rect width="4" height="12" x="15" y="5" rx="1"/></IconBase>;
+        const Info = ({ className }) => <IconBase className={className}><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></IconBase>;
+        const MapPin = ({ className }) => <IconBase className={className}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></IconBase>;
+        const Factory = ({ className }) => <IconBase className={className}><path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M17 18h1"/><path d="M12 18h1"/><path d="M7 18h1"/></IconBase>;
+        const Tractor = ({ className }) => <IconBase className={className}><path d="m10 11 11 .9c.6 0 .9.5.8 1.1l-.8 5h-1"/><path d="M16 18h-5"/><path d="M18 5a1 1 0 0 0-1 1v5.573"/><path d="M3 4h9l1 7.246"/><path d="M4 11V4"/><path d="M7 15h.01"/><path d="M8 10.1V4"/><circle cx="18" cy="18" r="2"/><circle cx="7" cy="15" r="4"/></IconBase>;
+        const Home = ({ className }) => <IconBase className={className}><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></IconBase>;
+        const Building2 = ({ className }) => <IconBase className={className}><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></IconBase>;
+        const Landmark = ({ className }) => <IconBase className={className}><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></IconBase>;
+        const FileText = ({ className }) => <IconBase className={className}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></IconBase>;
+        const ArrowDownRight = ({ className }) => <IconBase className={className}><path d="m7 7 10 10"/><path d="M17 7v10H7"/></IconBase>;
+        const Wand2 = ({ className }) => <IconBase className={className}><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></IconBase>;
+        
+        // Ícone adicional para o card de CAPEX
+        const Calculator = ({ className }) => <IconBase className={className}><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16.01" y1="14" y2="14"/><line x1="12" x2="12.01" y1="14" y2="14"/><line x1="8" x2="8.01" y1="14" y2="14"/><line x1="16" x2="16.01" y1="10" y2="10"/><line x1="12" x2="12.01" y1="10" y2="10"/><line x1="8" x2="8.01" y1="10" y2="10"/><line x1="16" x2="16.01" y1="18" y2="18"/><line x1="12" x2="12.01" y1="18" y2="18"/><line x1="8" x2="8.01" y1="18" y2="18"/></IconBase>;
 
         const App = () => {
             const bancoTarifas = {
@@ -108,11 +111,11 @@
             const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
             const classesConsumo = [
-                { id: 'Comercial', label: 'Comercial / Serviços', icon: <Building2 className="w-4 h-4"/> },
-                { id: 'Industrial', label: 'Industrial', icon: <Factory className="w-4 h-4"/> },
-                { id: 'Rural', label: 'Rural (Agro)', icon: <Tractor className="w-4 h-4"/> },
-                { id: 'Residencial', label: 'Residencial', icon: <Home className="w-4 h-4"/> },
-                { id: 'Publico', label: 'Poder Público', icon: <Landmark className="w-4 h-4"/> },
+                { id: 'Comercial', label: 'Comercial / Serviços', icon: <Building2 className="w-4 h-4" /> },
+                { id: 'Industrial', label: 'Industrial', icon: <Factory className="w-4 h-4" /> },
+                { id: 'Rural', label: 'Rural (Agro)', icon: <Tractor className="w-4 h-4" /> },
+                { id: 'Residencial', label: 'Residencial', icon: <Home className="w-4 h-4" /> },
+                { id: 'Publico', label: 'Poder Público', icon: <Landmark className="w-4 h-4" /> },
             ];
 
             useEffect(() => {
@@ -125,6 +128,7 @@
                         tarifaConsumoPonta: prev.grupoTarifario === 'A' ? tarifas.consumoPonta : 0
                     }));
                     setAutoFilled(true);
+                    
                     const timer = setTimeout(() => setAutoFilled(false), 3000);
                     return () => clearTimeout(timer);
                 }
@@ -139,6 +143,7 @@
                 } = formData;
 
                 const alerts = [];
+                
                 let custoEnergia = 0, custoEnergiaPonta = 0, custoDemandaBase = 0;
                 let multaUltrapassagem = 0, custoOciosidade = 0, percentualOcioso = 0;
                 let custoReativo = parseFloat(valorReativo) || 0;
@@ -146,14 +151,18 @@
                 let custoBandeiras = parseFloat(adicionalBandeiras) || 0;
                 let custoImpostos = parseFloat(impostosEncargos) || 0;
                 let custoAtraso = parseFloat(multasAtraso) || 0;
+                
                 let custoTotal = 0, potencialEconomia = 0, economiaSolar = 0, economiaGDCompartilhada = 0;
+                
+                // NOVA ALTERAÇÃO 3: Variáveis do Motor de ROI
                 let kwpEstimado = 0, capexEstimado = 0, paybackMeses = 0, roi10Anos = 0;
 
                 if (classeConsumo === 'Rural') {
                     alerts.push({
-                        type: 'info', title: 'Benefício Tarifário Rural',
-                        message: `Verifique se a ${concessionaria} está aplicando o subsídio (exige recadastramento periódico).`,
-                        icon: <Tractor className="text-blue-400 w-5 h-5"/>
+                        type: 'info',
+                        title: 'Benefício Tarifário Rural (Agro)',
+                        message: `Produtores rurais têm direito a descontos na tarifa (TE/TUSD). Verifique se a ${concessionaria} está aplicando o subsídio (exige recadastramento periódico).`,
+                        icon: <Tractor className="text-blue-400 w-5 h-5" />
                     });
                 }
 
@@ -163,7 +172,11 @@
                     custoDemandaBase = demandaContratada * tarifaDemanda;
 
                     const limiteTolerancia = demandaContratada * 1.05;
-                    if (demandaMedida > limiteTolerancia) multaUltrapassagem = (demandaMedida - demandaContratada) * (tarifaDemanda * 2);
+                    if (demandaMedida > limiteTolerancia) {
+                        const tarifaUltrapassagem = tarifaDemanda * 2;
+                        multaUltrapassagem = (demandaMedida - demandaContratada) * tarifaUltrapassagem;
+                    }
+
                     if (demandaMedida < demandaContratada) {
                         custoOciosidade = (demandaContratada - demandaMedida) * tarifaDemanda;
                         percentualOcioso = ((demandaContratada - demandaMedida) / demandaContratada) * 100;
@@ -174,22 +187,40 @@
                     economiaSolar = (custoEnergia + custoEnergiaPonta) * 0.85; 
                     economiaGDCompartilhada = (custoEnergia + custoEnergiaPonta) * 0.15; 
 
-                    if (multaUltrapassagem > 0) alerts.push({ type: 'danger', title: 'Multa por Ultrapassagem de Demanda', message: `A demanda medida excedeu o contrato. A ${concessionaria} cobrou multa severa.`, icon: <TrendingUp className="text-red-400 w-5 h-5"/> });
-                    if (percentualOcioso > 10) alerts.push({ type: 'warning', title: 'Desperdício: Demanda Ociosa', message: `O cliente utilizou ${percentualOcioso.toFixed(1)}% a menos do que contratou.`, icon: <ArrowDownRight className="text-yellow-400 w-5 h-5"/> });
-                    if (custoReativo > 0) alerts.push({ type: 'danger', title: 'Multa de Energia Reativa (Baixo FP)', message: `Multa de R$ ${custoReativo.toFixed(2)} identificada. Instale banco de capacitores.`, icon: <Zap className="text-red-400 w-5 h-5"/> });
+                    if (multaUltrapassagem > 0) {
+                        alerts.push({ type: 'danger', title: 'Urgente: Multa por Ultrapassagem de Demanda', message: `A demanda medida (${demandaMedida} kW) excedeu o limite do contrato. A ${concessionaria} cobrou multa severa. Urgente: Estudo para aumento do contrato de demanda.`, icon: <TrendingUp className="text-red-400 w-5 h-5" /> });
+                    } 
+                    if (percentualOcioso > 10) {
+                        alerts.push({ type: 'warning', title: 'Desperdício: Demanda Ociosa', message: `O cliente utilizou ${percentualOcioso.toFixed(1)}% a menos do que contratou. Isso gerou um desperdício de R$ ${custoOciosidade.toFixed(2)}. Sugerimos solicitar redução de demanda.`, icon: <ArrowDownRight className="text-yellow-400 w-5 h-5" /> });
+                    }
+                    if (custoEnergiaPonta > custoEnergia * 0.3) {
+                        alerts.push({ type: 'warning', title: 'Atenção: Alto Consumo no Horário de Ponta', message: `Consumo elevado no pico (tarifa de R$ ${tarifaConsumoPonta.toFixed(2)}). Avalie deslocar cargas (motores, fornos) para o horário fora de ponta ou investir em geradores para o pico.`, icon: <TrendingUp className="text-orange-400 w-5 h-5" /> });
+                    }
+                    if (custoReativo > 0) {
+                        alerts.push({ type: 'danger', title: 'Penalidade: Energia Reativa (Baixo FP)', message: `Multa de R$ ${custoReativo.toFixed(2)} por excesso de energia reativa. Recomendamos urgentemente a instalação/manutenção de banco de capacitores. ROI costuma ser < 8 meses.`, icon: <Zap className="text-red-400 w-5 h-5" /> });
+                    }
+                    if (multaUltrapassagem === 0 && percentualOcioso <= 10 && custoReativo === 0) {
+                        alerts.push({ type: 'success', title: 'Fatura Otimizada (Grupo A)', message: `Parâmetros de demanda e reativo estão excelentes. Próximo passo para redução: Migração para o Mercado Livre de Energia ou autoprodução.`, icon: <CheckCircle2 className="text-emerald-400 w-5 h-5" /> });
+                    }
 
                 } else {
                     custoEnergia = consumoAtivo * tarifaConsumo;
                     custoTotal = custoEnergia + custoIluminacao + custoBandeiras + custoImpostos + custoAtraso;
                     potencialEconomia = custoAtraso; 
-                    economiaSolar = custoEnergia * 0.90; 
-                    economiaGDCompartilhada = custoEnergia * 0.15; 
-                    alerts.push({ type: 'success', title: 'Excelente para Fotovoltaico', message: `Perfil ideal. Economia de aprox. R$ ${economiaSolar.toFixed(2)}/mês.`, icon: <Zap className="text-emerald-400 w-5 h-5"/> });
+                    economiaSolar = custoEnergia * 0.90;
+                    economiaGDCompartilhada = custoEnergia * 0.15;
+
+                    if (consumoAtivo > 3000 && classeConsumo !== 'Residencial') {
+                         alerts.push({ type: 'warning', title: 'Estudo de Migração Tarifária (A4)', message: `Consumo alto para baixa tensão. Pode ser vantajoso migrar para o Grupo A (Média Tensão) com cabine primária própria, onde a tarifa base da ${concessionaria} é mais barata.`, icon: <TrendingUp className="text-yellow-400 w-5 h-5" /> });
+                    }
+                    alerts.push({ type: 'success', title: 'Viabilidade de Energia Solar', message: `Excelente perfil para Fotovoltaico. O cliente economizaria aprox. R$ ${(custoEnergia * 0.9).toFixed(2)}/mês. É possível financiar trocando o valor da parcela pela economia gerada.`, icon: <Zap className="text-emerald-400 w-5 h-5" /> });
                 }
 
-                if (custoAtraso > 0) alerts.push({ type: 'danger', title: 'Gestão Financeira: Juros / Multas', message: `Foram identificados R$ ${custoAtraso.toFixed(2)} em multas por atraso.`, icon: <DollarSign className="text-red-400 w-5 h-5"/> });
+                if (custoAtraso > 0) {
+                    alerts.push({ type: 'danger', title: 'Gestão Financeira: Juros / Multas', message: `Foram identificados R$ ${custoAtraso.toFixed(2)} em multas por atraso. Um custo 100% evitável que corrói o fluxo de caixa da empresa mês a mês.`, icon: <DollarSign className="text-red-400 w-5 h-5" /> });
+                }
 
-                // CÁLCULO DE ROI E PAYBACK (Usina Solar Própria)
+                // CONTINUAÇÃO ALTERAÇÃO 3: Lógica matemática do ROI
                 const geracaoTotalKwh = consumoAtivo + (parseFloat(consumoPonta) || 0);
                 kwpEstimado = geracaoTotalKwh / 135; // Assumindo geração média de 135 kWh/mês por kWp
                 capexEstimado = kwpEstimado * 3500; // Custo médio de mercado de R$ 3.500 por kWp instalado
@@ -197,25 +228,34 @@
                 roi10Anos = capexEstimado > 0 ? (((economiaSolar * 120) - capexEstimado) / capexEstimado) * 100 : 0;
 
                 setAnalysis({
-                    concessionaria, classeConsumo, grupoTarifario, modalidadeTarifaria, demandaContratada, demandaMedida, consumoAtivo, consumoPonta,
+                    concessionaria, classeConsumo, grupoTarifario, modalidadeTarifaria, demandaContratada, demandaMedida,
                     custoTotal, custoEnergia, custoEnergiaPonta, custoDemandaBase, multaUltrapassagem, custoReativo, custoIluminacao, custoBandeiras, custoImpostos, custoAtraso,
                     custoOciosidade, percentualOcioso, potencialEconomia, economiaSolar, economiaGDCompartilhada, alerts,
                     kwpEstimado, capexEstimado, paybackMeses, paybackAnos: paybackMeses/12, roi10Anos
                 });
             };
 
-            useEffect(() => { calculateAnalysis(); }, [formData]);
+            useEffect(() => {
+                calculateAnalysis();
+            }, [formData]);
 
             const handleInputChange = (e) => {
                 const { name, value, type } = e.target;
                 setFormData(prev => ({
                     ...prev,
-                    [name]: type === 'radio' || type === 'select-one' || (typeof value === 'string' && isNaN(value)) ? value : (value === '' ? '' : parseFloat(value))
+                    [name]: type === 'radio' || type === 'select-one' || (typeof value === 'string' && isNaN(value))
+                        ? value 
+                        : (value === '' ? '' : parseFloat(value))
                 }));
             };
 
-            const formatCurrency = (value) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value || 0);
-            const formatNumber = (value) => new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 }).format(value || 0);
+            const formatCurrency = (value) => {
+                return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value || 0);
+            };
+
+            const formatNumber = (value) => {
+                return new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 }).format(value || 0);
+            };
 
             // DADOS PARA OS GRÁFICOS DO RECHARTS
             const getChartData = () => {
@@ -232,11 +272,11 @@
                 if(!analysis) return [];
                 return [
                     { name: 'Fatura Atual', Atual: analysis.custoTotal, Projetado: 0 },
-                    { name: 'Pós-Solar (Média)', Atual: 0, Projetado: analysis.custoTotal - analysis.economiaSolar }
+                    { name: 'Pós-Solar', Atual: 0, Projetado: analysis.custoTotal - analysis.economiaSolar }
                 ];
             };
 
-            // GERAÇÃO DO PDF (MODO SLIDE DECK / PAISAGEM / DARK MODE SIMULADO)
+            // NOVA ALTERAÇÃO 4: GERAÇÃO DO PDF (MODO SLIDE DECK / PAISAGEM / DARK MODE)
             const handleGeneratePDF = () => {
                 if (!analysis) return;
                 setIsGeneratingPDF(true);
@@ -266,7 +306,7 @@
                     pageOrientation: 'landscape',
                     pageMargins: [ 40, 40, 40, 40 ],
                     background: function () {
-                        return { canvas: [{ type: 'rect', x: 0, y: 0, w: 841.89, h: 595.28, color: bgDark }] }; // A4 landscape dim
+                        return { canvas: [{ type: 'rect', x: 0, y: 0, w: 841.89, h: 595.28, color: bgDark }] };
                     },
                     defaultStyle: { font: 'Roboto', color: textWhite },
                     styles: {
@@ -341,7 +381,7 @@
                                     stack: [
                                         { text: 'Tamanho Estimado (Mínimo)', style: 'cardTitle' },
                                         { text: `${formatNumber(analysis.kwpEstimado)} kWp`, style: 'valueHuge', color: cyan },
-                                        { text: `Geração necessária: ${formatNumber(analysis.consumoAtivo + (analysis.consumoPonta||0))} kWh/mês`, fontSize: 10, color: textGray }
+                                        { text: `Geração necessária: ${formatNumber(formData.consumoAtivo + (formData.consumoPonta||0))} kWh/mês`, fontSize: 10, color: textGray }
                                     ]
                                 },
                                 {
@@ -388,6 +428,7 @@
                 };
 
                 pdfMake.createPdf(docDefinition).download(`Apresentacao_Comercial_${analysis.concessionaria.replace(/\s+/g, '_')}.pdf`);
+                
                 setTimeout(() => setIsGeneratingPDF(false), 1000);
             };
 
@@ -398,144 +439,303 @@
                         <div className="flex items-center gap-3">
                             <div className="bg-emerald-500 p-2.5 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.25)] relative overflow-hidden">
                                 <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
-                                <Zap className="text-[#060e1f] w-6 h-6 relative z-10"/>
+                                <Zap className="text-[#060e1f] w-6 h-6 relative z-10" />
                             </div>
                             <div>
                                 <h1 className="text-2xl font-extrabold text-white tracking-tight">ENGER <span className="text-emerald-500">Analytics</span> <span className="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full ml-1 align-top">PRO</span></h1>
                                 <p className="text-xs md:text-sm text-slate-400 font-medium">Dashboard Executivo de Inteligência Tarifária e ROI</p>
                             </div>
                         </div>
+                        <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-[#0d172a] rounded-lg border border-slate-800">
+                            <FileText className="w-4 h-4 text-emerald-500" />
+                            <span className="text-xs font-semibold text-slate-300">Emissão de Laudo Ativa</span>
+                        </div>
                     </header>
 
-                    <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
                         
-                        {/* FORMULÁRIO COLUNA ESQUERDA */}
-                        <div className="xl:col-span-4 space-y-6">
-                            <div className="bg-[#0b1325] p-5 rounded-2xl shadow-2xl border border-slate-800/80">
+                        {/* Left Column - Input Form */}
+                        <div className="lg:col-span-4 space-y-6">
+                            <div className="bg-[#0b1325] p-5 md:p-6 rounded-2xl shadow-2xl border border-slate-800/80">
                                 <div className="flex items-center gap-2 mb-5 pb-3 border-b border-slate-800/60">
-                                    <Settings className="w-5 h-5 text-emerald-500"/>
+                                    <Settings className="w-5 h-5 text-emerald-500" />
                                     <h2 className="text-lg font-bold text-white">Parâmetros da Fatura</h2>
                                 </div>
+                                
                                 <form className="space-y-5">
+                                    
+                                    {/* Identificação */}
                                     <div className="space-y-4">
+                                        <h3 className="text-xs font-bold uppercase text-slate-400 tracking-wider">Identificação do Cliente</h3>
+                                        
                                         <div className="grid grid-cols-1 gap-4">
                                             <div>
                                                 <label className="block text-xs font-medium text-slate-400 mb-1.5 flex items-center justify-between">
-                                                    <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5"/> Concessionária</span>
-                                                    {autoFilled && <span className="text-[9px] text-emerald-400 flex items-center gap-1 bg-emerald-900/30 px-1.5 py-0.5 rounded"><Wand2 className="w-2.5 h-2.5"/> Auto</span>}
+                                                    <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> Concessionária</span>
+                                                    {autoFilled && <span className="text-[9px] text-emerald-400 flex items-center gap-1 bg-emerald-900/30 px-1.5 py-0.5 rounded"><Wand2 className="w-2.5 h-2.5"/> Tarifas Atualizadas</span>}
                                                 </label>
-                                                <select name="concessionaria" value={formData.concessionaria} onChange={handleInputChange} className="w-full px-3 py-2.5 bg-[#060e1f] border border-slate-700/80 text-white rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm cursor-pointer">
+                                                <select 
+                                                    name="concessionaria" 
+                                                    value={formData.concessionaria} 
+                                                    onChange={handleInputChange} 
+                                                    className="w-full px-3 py-2.5 bg-[#060e1f] border border-slate-700/80 text-white rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all text-sm appearance-none cursor-pointer hover:border-slate-600"
+                                                >
                                                     {concessionarias.map(c => <option key={c} value={c}>{c}</option>)}
                                                 </select>
                                             </div>
+
                                             <div>
-                                                <label className="block text-xs font-medium text-slate-400 mb-1.5">Classe de Consumo</label>
+                                                <label className="block text-xs font-medium text-slate-400 mb-1.5">Classe / Subgrupo de Consumo</label>
                                                 <div className="grid grid-cols-2 gap-2">
-                                                    {classesConsumo.map(c => (
-                                                        <label key={c.id} className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer border transition-all ${formData.classeConsumo === c.id ? 'bg-[#0f1d35] border-yellow-500/50 text-yellow-400' : 'bg-[#060e1f] border-slate-800 text-slate-400 hover:border-slate-700'}`}>
-                                                            <input type="radio" name="classeConsumo" value={c.id} checked={formData.classeConsumo === c.id} onChange={handleInputChange} className="hidden" />
-                                                            {c.icon}
-                                                            <span className="text-[11px] font-semibold">{c.id}</span>
+                                                    {classesConsumo.map(classe => (
+                                                        <label key={classe.id} className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer border transition-all ${formData.classeConsumo === classe.id ? 'bg-[#0f1d35] border-yellow-500/50 text-yellow-400 shadow-[0_0_10px_rgba(234,179,8,0.05)]' : 'bg-[#060e1f] border-slate-800 text-slate-400 hover:border-slate-700'}`}>
+                                                            <input type="radio" name="classeConsumo" value={classe.id} checked={formData.classeConsumo === classe.id} onChange={handleInputChange} className="hidden" />
+                                                            {classe.icon}
+                                                            <span className="text-[11px] font-semibold">{classe.id}</span>
                                                         </label>
                                                     ))}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+
+                                    {/* Enquadramento */}
                                     <div className="space-y-3 pt-4 border-t border-slate-800/60">
                                         <h3 className="text-xs font-bold uppercase text-slate-400 tracking-wider">Enquadramento</h3>
                                         <div className="grid grid-cols-2 gap-3">
-                                            <label className={`flex flex-col items-center justify-center p-3 rounded-xl cursor-pointer border transition-all ${formData.grupoTarifario === 'A' ? 'bg-[#0f1d35] border-emerald-500' : 'bg-[#060e1f] border-slate-800'}`}>
+                                            <label className={`flex flex-col items-center justify-center p-3 rounded-xl cursor-pointer border transition-all ${formData.grupoTarifario === 'A' ? 'bg-[#0f1d35] border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.1)]' : 'bg-[#060e1f] border-slate-800 hover:border-slate-700'}`}>
                                                 <input type="radio" name="grupoTarifario" value="A" checked={formData.grupoTarifario === 'A'} onChange={handleInputChange} className="hidden" />
                                                 <span className="text-sm font-bold text-white">Grupo A</span>
-                                                <span className="text-[10px] text-slate-400 mt-1 uppercase tracking-wider">Alta Tensão</span>
+                                                <span className="text-[10px] text-slate-400 mt-1 uppercase tracking-wider">Média/Alta Tensão</span>
                                             </label>
-                                            <label className={`flex flex-col items-center justify-center p-3 rounded-xl cursor-pointer border transition-all ${formData.grupoTarifario === 'B' ? 'bg-[#0f1d35] border-emerald-500' : 'bg-[#060e1f] border-slate-800'}`}>
+                                            <label className={`flex flex-col items-center justify-center p-3 rounded-xl cursor-pointer border transition-all ${formData.grupoTarifario === 'B' ? 'bg-[#0f1d35] border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.1)]' : 'bg-[#060e1f] border-slate-800 hover:border-slate-700'}`}>
                                                 <input type="radio" name="grupoTarifario" value="B" checked={formData.grupoTarifario === 'B'} onChange={handleInputChange} className="hidden" />
                                                 <span className="text-sm font-bold text-white">Grupo B</span>
                                                 <span className="text-[10px] text-slate-400 mt-1 uppercase tracking-wider">Baixa Tensão</span>
                                             </label>
                                         </div>
+
+                                        {formData.grupoTarifario === 'A' && (
+                                            <div className="mt-3">
+                                                <label className="block text-[11px] font-medium text-slate-400 mb-1.5">Modalidade Tarifária (Grupo A)</label>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    <label className={`flex items-center justify-center gap-2 p-2 rounded-lg cursor-pointer border transition-all ${formData.modalidadeTarifaria === 'Verde' ? 'bg-emerald-900/20 border-emerald-500/50 text-emerald-400' : 'bg-[#060e1f] border-slate-800 text-slate-400 hover:border-slate-700'}`}>
+                                                        <input type="radio" name="modalidadeTarifaria" value="Verde" checked={formData.modalidadeTarifaria === 'Verde'} onChange={handleInputChange} className="hidden" />
+                                                        <span className="text-xs font-semibold">Tarifa Verde</span>
+                                                    </label>
+                                                    <label className={`flex items-center justify-center gap-2 p-2 rounded-lg cursor-pointer border transition-all ${formData.modalidadeTarifaria === 'Azul' ? 'bg-blue-900/20 border-blue-500/50 text-blue-400' : 'bg-[#060e1f] border-slate-800 text-slate-400 hover:border-slate-700'}`}>
+                                                        <input type="radio" name="modalidadeTarifaria" value="Azul" checked={formData.modalidadeTarifaria === 'Azul'} onChange={handleInputChange} className="hidden" />
+                                                        <span className="text-xs font-semibold">Tarifa Azul</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
+
+                                    {/* Demanda Contratada (Apenas Grupo A) */}
                                     {formData.grupoTarifario === 'A' && (
                                         <div className="space-y-4 pt-4 border-t border-slate-800/60">
-                                            <h3 className="text-xs font-bold uppercase text-blue-400 tracking-wider">Demanda (kW)</h3>
+                                            <h3 className="text-xs font-bold uppercase text-blue-400 tracking-wider flex items-center gap-1.5"><Activity className="w-3.5 h-3.5"/> Demanda (kW)</h3>
+                                            
                                             <div className="grid grid-cols-2 gap-3">
-                                                <div><label className="block text-[11px] text-slate-300 mb-1">Contratada</label><input type="number" name="demandaContratada" value={formData.demandaContratada} onChange={handleInputChange} className="w-full px-3 py-2 bg-[#060e1f] border border-slate-700 text-white rounded-lg focus:ring-1 focus:ring-blue-500 outline-none text-sm" /></div>
-                                                <div><label className="block text-[11px] text-slate-300 mb-1">Medida</label><input type="number" name="demandaMedida" value={formData.demandaMedida} onChange={handleInputChange} className="w-full px-3 py-2 bg-[#060e1f] border border-slate-700 text-white rounded-lg focus:ring-1 focus:ring-blue-500 outline-none text-sm" /></div>
+                                                <div>
+                                                    <label className="block text-[11px] font-medium text-slate-300 mb-1">Contratada</label>
+                                                    <input type="number" name="demandaContratada" value={formData.demandaContratada} onChange={handleInputChange} className="w-full px-3 py-2.5 bg-[#060e1f] border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm" />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-[11px] font-medium text-slate-300 mb-1">Medida (Faturada)</label>
+                                                    <input type="number" name="demandaMedida" value={formData.demandaMedida} onChange={handleInputChange} className="w-full px-3 py-2.5 bg-[#060e1f] border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm" />
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label className="block text-[11px] font-medium text-slate-300 mb-1 flex items-center justify-between">
+                                                    Tarifa Demanda (R$/kW)
+                                                    <Wand2 className={`w-3 h-3 ${autoFilled ? 'text-emerald-500 animate-pulse' : 'text-slate-600'}`}/>
+                                                </label>
+                                                <div className="relative">
+                                                    <span className="absolute left-3 top-2 text-xs text-slate-500">R$</span>
+                                                    <input type="number" name="tarifaDemanda" value={formData.tarifaDemanda} onChange={handleInputChange} step="0.01" className="w-full pl-8 pr-3 py-2.5 bg-[#060e1f] border border-slate-700 text-white rounded-lg focus:ring-1 focus:ring-blue-500 outline-none text-sm" />
+                                                </div>
                                             </div>
                                         </div>
                                     )}
+
+                                    {/* Dados de Consumo */}
                                     <div className="space-y-4 pt-4 border-t border-slate-800/60">
-                                        <h3 className="text-xs font-bold uppercase text-emerald-500 tracking-wider">Consumo (kWh)</h3>
+                                        <h3 className="text-xs font-bold uppercase text-emerald-500 tracking-wider flex items-center gap-1.5"><Zap className="w-3.5 h-3.5"/> Consumo (kWh)</h3>
+                                        
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <div>
+                                                <label className="block text-[11px] font-medium text-slate-300 mb-1">
+                                                    {formData.grupoTarifario === 'A' ? 'Consumo (Fora Ponta)' : 'Consumo Total'}
+                                                </label>
+                                                <div className="relative">
+                                                    <input type="number" name="consumoAtivo" value={formData.consumoAtivo} onChange={handleInputChange} className="w-full pl-3 pr-8 py-2.5 bg-[#060e1f] border border-slate-700 text-white rounded-lg focus:ring-1 focus:ring-emerald-500 outline-none text-sm" />
+                                                    <span className="absolute right-3 top-2.5 text-[10px] text-slate-500">kWh</span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label className="block text-[11px] font-medium text-slate-300 mb-1 flex items-center justify-between">
+                                                    Tarifa (R$/kWh)
+                                                    <Wand2 className={`w-3 h-3 ${autoFilled ? 'text-emerald-500 animate-pulse' : 'text-slate-600'}`}/>
+                                                </label>
+                                                <div className="relative">
+                                                    <span className="absolute left-3 top-2.5 text-xs text-slate-500">R$</span>
+                                                    <input type="number" name="tarifaConsumo" value={formData.tarifaConsumo} onChange={handleInputChange} step="0.01" className="w-full pl-8 pr-3 py-2.5 bg-[#060e1f] border border-slate-700 text-white rounded-lg focus:ring-1 focus:ring-emerald-500 outline-none text-sm" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {formData.grupoTarifario === 'A' && (
+                                            <div className="p-3 bg-orange-950/20 border border-orange-900/30 rounded-lg space-y-3">
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                    <div>
+                                                        <label className="block text-[11px] font-medium text-orange-400/90 mb-1">Consumo (Ponta)</label>
+                                                        <div className="relative">
+                                                            <input type="number" name="consumoPonta" value={formData.consumoPonta} onChange={handleInputChange} className="w-full pl-3 pr-8 py-2 bg-[#060e1f] border border-orange-900/50 text-white rounded-md focus:ring-1 focus:ring-orange-500 outline-none text-sm" />
+                                                            <span className="absolute right-3 top-2 text-[10px] text-slate-500">kWh</span>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-[11px] font-medium text-orange-400/90 mb-1">Tarifa (Ponta)</label>
+                                                        <div className="relative">
+                                                            <span className="absolute left-3 top-2 text-xs text-slate-500">R$</span>
+                                                            <input type="number" name="tarifaConsumoPonta" value={formData.tarifaConsumoPonta} onChange={handleInputChange} step="0.01" className="w-full pl-8 pr-3 py-2 bg-[#060e1f] border border-orange-900/50 text-white rounded-md focus:ring-1 focus:ring-orange-500 outline-none text-sm" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                        
+                                        {formData.grupoTarifario === 'B' && (
+                                            <div>
+                                                <label className="block text-[11px] font-medium text-slate-300 mb-1">Taxa de Iluminação (COSIP)</label>
+                                                <div className="relative">
+                                                    <span className="absolute left-3 top-2.5 text-xs text-slate-500">R$</span>
+                                                    <input type="number" name="taxaIluminacao" value={formData.taxaIluminacao} onChange={handleInputChange} className="w-full pl-8 pr-3 py-2.5 bg-[#060e1f] border border-slate-700 text-white rounded-lg focus:ring-1 focus:ring-yellow-500 outline-none text-sm" />
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Adicionais e Impostos */}
+                                    <div className="space-y-4 pt-4 border-t border-slate-800/60">
+                                        <h3 className="text-xs font-bold uppercase text-purple-400 tracking-wider flex items-center gap-1.5"><DollarSign className="w-3.5 h-3.5"/> Encargos e Adicionais</h3>
+                                        
                                         <div className="grid grid-cols-2 gap-3">
-                                            <div><label className="block text-[11px] text-slate-300 mb-1">Total/Fora Ponta</label><input type="number" name="consumoAtivo" value={formData.consumoAtivo} onChange={handleInputChange} className="w-full px-3 py-2 bg-[#060e1f] border border-slate-700 text-white rounded-lg focus:ring-1 focus:ring-emerald-500 outline-none text-sm" /></div>
-                                            {formData.grupoTarifario === 'A' && (
-                                                <div><label className="block text-[11px] text-orange-400 mb-1">Ponta</label><input type="number" name="consumoPonta" value={formData.consumoPonta} onChange={handleInputChange} className="w-full px-3 py-2 bg-[#060e1f] border border-orange-900/50 text-white rounded-lg focus:ring-1 focus:ring-orange-500 outline-none text-sm" /></div>
-                                            )}
+                                            <div>
+                                                <label className="block text-[11px] font-medium text-slate-300 mb-1">Bandeira Tarifária</label>
+                                                <div className="relative">
+                                                    <span className="absolute left-3 top-2 text-xs text-slate-500">R$</span>
+                                                    <input type="number" name="adicionalBandeiras" value={formData.adicionalBandeiras} onChange={handleInputChange} className="w-full pl-8 pr-3 py-2 bg-[#060e1f] border border-slate-700 text-white rounded-md focus:ring-1 focus:ring-purple-500 outline-none text-sm" />
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label className="block text-[11px] font-medium text-slate-300 mb-1">Outros / Impostos Avulsos</label>
+                                                <div className="relative">
+                                                    <span className="absolute left-3 top-2 text-xs text-slate-500">R$</span>
+                                                    <input type="number" name="impostosEncargos" value={formData.impostosEncargos} onChange={handleInputChange} className="w-full pl-8 pr-3 py-2 bg-[#060e1f] border border-slate-700 text-white rounded-md focus:ring-1 focus:ring-purple-500 outline-none text-sm" />
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
+
+                                    {/* Penalidades */}
                                     <div className="space-y-4 pt-4 border-t border-slate-800/60">
-                                        <h3 className="text-xs font-bold uppercase text-rose-500 tracking-wider">Penalidades / Outros</h3>
-                                        <div className="grid grid-cols-2 gap-3">
-                                            {formData.grupoTarifario === 'A' && <div><label className="block text-[11px] text-slate-300 mb-1">Multa Reativo (R$)</label><input type="number" name="valorReativo" value={formData.valorReativo} onChange={handleInputChange} className="w-full px-3 py-2 bg-[#140b10] border border-rose-900/50 text-white rounded-lg outline-none text-sm" /></div>}
-                                            <div><label className="block text-[11px] text-slate-300 mb-1">Multas Atraso (R$)</label><input type="number" name="multasAtraso" value={formData.multasAtraso} onChange={handleInputChange} className="w-full px-3 py-2 bg-[#140b10] border border-rose-900/50 text-white rounded-lg outline-none text-sm" /></div>
-                                            {formData.grupoTarifario === 'B' && <div><label className="block text-[11px] text-slate-300 mb-1">COSIP (R$)</label><input type="number" name="taxaIluminacao" value={formData.taxaIluminacao} onChange={handleInputChange} className="w-full px-3 py-2 bg-[#060e1f] border border-slate-700 text-white rounded-lg outline-none text-sm" /></div>}
+                                        <h3 className="text-xs font-bold uppercase text-rose-500 tracking-wider flex items-center gap-1.5"><AlertCircle className="w-3.5 h-3.5"/> Multas e Penalidades</h3>
+                                        
+                                        {formData.grupoTarifario === 'A' && (
+                                            <div>
+                                                <label className="block text-[11px] font-medium text-slate-300 mb-1">Energia Reativa (Multa Fator de Potência)</label>
+                                                <div className="relative">
+                                                    <span className="absolute left-3 top-2.5 text-xs text-rose-500/70">R$</span>
+                                                    <input type="number" name="valorReativo" value={formData.valorReativo} onChange={handleInputChange} className="w-full pl-8 pr-3 py-2.5 bg-[#140b10] border border-rose-900/50 text-white rounded-lg focus:ring-2 focus:ring-rose-500 outline-none text-sm" />
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <div>
+                                            <label className="block text-[11px] font-medium text-slate-300 mb-1">Juros / Multa por Atraso</label>
+                                            <div className="relative">
+                                                <span className="absolute left-3 top-2.5 text-xs text-rose-500/70">R$</span>
+                                                <input type="number" name="multasAtraso" value={formData.multasAtraso} onChange={handleInputChange} className="w-full pl-8 pr-3 py-2.5 bg-[#140b10] border border-rose-900/50 text-white rounded-lg focus:ring-2 focus:ring-rose-500 outline-none text-sm" />
+                                            </div>
                                         </div>
                                     </div>
+
                                 </form>
                             </div>
                         </div>
 
-                        {/* DASHBOARD COLUNA DIREITA */}
-                        <div className="xl:col-span-8 space-y-6">
+                        {/* Right Column - Results Dashboard */}
+                        <div className="lg:col-span-8 space-y-6">
                             {analysis && (
                                 <>
-                                    {/* 4 Cards Principais */}
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                                        <div className="bg-[#0b1325] p-5 rounded-2xl border border-slate-800 flex flex-col justify-center relative overflow-hidden group">
-                                            <h3 className="text-[10px] uppercase text-slate-400 font-bold mb-2 flex items-center gap-1.5"><DollarSign className="w-3.5 h-3.5"/> Fatura Estimada</h3>
-                                            <p className="text-xl lg:text-2xl font-black text-white">{formatCurrency(analysis.custoTotal)}</p>
+                                    {/* Highlight Cards COM NOVA ALTERAÇÃO DO CAPEX */}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                                        <div className="bg-[#0b1325] p-5 rounded-2xl shadow-xl border border-slate-800/80 flex flex-col justify-center relative overflow-hidden group hover:border-slate-600 transition-colors">
+                                            <div className="absolute -right-4 -top-4 w-24 h-24 bg-slate-800/20 rounded-full blur-2xl group-hover:bg-slate-700/30 transition-all"></div>
+                                            <h3 className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-2 flex items-center gap-1.5"><DollarSign className="w-3.5 h-3.5"/> Fatura Estimada</h3>
+                                            <p className="text-xl lg:text-2xl font-black text-white tracking-tight">{formatCurrency(analysis.custoTotal)}</p>
                                         </div>
-                                        <div className="p-5 rounded-2xl border bg-gradient-to-br from-[#1a140f] to-[#0b1325] border-red-900/50 flex flex-col justify-center">
-                                            <h3 className="text-[10px] uppercase font-bold mb-2 flex items-center gap-1.5 text-red-400"><TrendingDown className="w-3.5 h-3.5"/> Desperdício / Multas</h3>
-                                            <p className="text-xl lg:text-2xl font-black text-white">{formatCurrency(analysis.potencialEconomia)}</p>
+                                        
+                                        <div className="p-5 rounded-2xl shadow-xl border flex flex-col justify-center relative overflow-hidden group transition-colors bg-gradient-to-br from-[#1a140f] to-[#0b1325] border-yellow-900/50 hover:border-yellow-700/60">
+                                            <div className="absolute -right-2 -bottom-2 p-4 opacity-[0.07] transform group-hover:scale-110 transition-transform text-yellow-500">
+                                                <TrendingDown className="w-20 h-20" />
+                                            </div>
+                                            <h3 className="text-[10px] uppercase tracking-wider font-bold mb-2 flex items-center gap-1.5 text-yellow-400">
+                                                <TrendingDown className="w-3.5 h-3.5"/> Desperdício / Multas
+                                            </h3>
+                                            <p className="text-xl lg:text-2xl font-black text-white tracking-tight">{formatCurrency(analysis.potencialEconomia)}</p>
                                         </div>
-                                        <div className="p-5 rounded-2xl border bg-gradient-to-br from-[#0f1a14] to-[#0b1325] border-emerald-900/50 flex flex-col justify-center">
-                                            <h3 className="text-[10px] uppercase font-bold mb-2 flex items-center gap-1.5 text-emerald-400"><Zap className="w-3.5 h-3.5"/> Economia Solar</h3>
-                                            <p className="text-xl lg:text-2xl font-black text-white">{formatCurrency(analysis.economiaSolar)}</p>
+
+                                        <div className="p-5 rounded-2xl shadow-xl border flex flex-col justify-center relative overflow-hidden group transition-colors bg-gradient-to-br from-[#0f1a14] to-[#0b1325] border-emerald-900/50 hover:border-emerald-700/60">
+                                            <div className="absolute -right-2 -bottom-2 p-4 opacity-[0.07] transform group-hover:scale-110 transition-transform text-emerald-500">
+                                                <Zap className="w-20 h-20" />
+                                            </div>
+                                            <h3 className="text-[10px] uppercase tracking-wider font-bold mb-2 flex items-center gap-1.5 text-emerald-400">
+                                                <Zap className="w-3.5 h-3.5"/> Economia Solar
+                                            </h3>
+                                            <p className="text-xl lg:text-2xl font-black text-white tracking-tight">{formatCurrency(analysis.economiaSolar)}</p>
                                         </div>
-                                        <div className="p-5 rounded-2xl border bg-gradient-to-br from-[#0f172a] to-[#0b1325] border-cyan-900/50 flex flex-col justify-center">
-                                            <h3 className="text-[10px] uppercase font-bold mb-2 flex items-center gap-1.5 text-cyan-400"><Calculator className="w-3.5 h-3.5"/> CAPEX Estimado Solar</h3>
-                                            <p className="text-xl lg:text-2xl font-black text-white">{formatCurrency(analysis.capexEstimado)}</p>
+
+                                        <div className="p-5 rounded-2xl shadow-xl border flex flex-col justify-center relative overflow-hidden group transition-colors bg-gradient-to-br from-[#0f172a] to-[#0b1325] border-cyan-900/50 hover:border-cyan-700/60">
+                                            <div className="absolute -right-2 -bottom-2 p-4 opacity-[0.07] transform group-hover:scale-110 transition-transform text-cyan-500">
+                                                <Calculator className="w-20 h-20" />
+                                            </div>
+                                            <h3 className="text-[10px] uppercase tracking-wider font-bold mb-2 flex items-center gap-1.5 text-cyan-400">
+                                                <Calculator className="w-3.5 h-3.5"/> CAPEX Estimado
+                                            </h3>
+                                            <p className="text-xl lg:text-2xl font-black text-white tracking-tight">{formatCurrency(analysis.capexEstimado)}</p>
                                         </div>
                                     </div>
 
-                                    {/* Gráficos Reais (Recharts) */}
+                                    {/* NOVA ALTERAÇÃO 5: INCLUSÃO DOS GRÁFICOS DO RECHARTS */}
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                         {/* Donut Chart: Composição da Fatura */}
-                                        <div className="bg-[#0b1325] p-6 rounded-2xl border border-slate-800">
-                                            <h2 className="text-sm font-bold text-white uppercase tracking-wider mb-4 flex items-center gap-2"><PieChart className="w-4 h-4"/> Composição de Custos</h2>
+                                        <div className="bg-[#0b1325] p-6 rounded-2xl border border-slate-800 shadow-xl">
+                                            <h2 className="text-sm font-bold text-white uppercase tracking-wider mb-4 flex items-center gap-2"> Composição de Custos</h2>
                                             <div className="h-64">
-                                                <ResponsiveContainer height="100%" width="100%">
+                                                <ResponsiveContainer width="100%" height="100%">
                                                     <PieChart>
-                                                        <Pie cx="50%" cy="50%" data="{getChartData()}" dataKey="value" innerRadius="{60}" outerRadius="{80}" paddingAngle="{5}">
+                                                        <Pie data={getChartData()} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
                                                             {getChartData().map((entry, index) => (
-                                                                <Cell fill="{entry.color}" key="{`cell-${index}`}"/>
+                                                                <Cell key={`cell-${index}`} fill={entry.color} />
                                                             ))}
                                                         </Pie>
-                                                        <Tooltip formatter="{(value)"> formatCurrency(value)} 
+                                                        <Tooltip 
+                                                            formatter={(value) => formatCurrency(value)} 
                                                             contentStyle={{backgroundColor: '#0b1325', borderColor: '#334155', color: '#fff'}}
                                                             itemStyle={{color: '#fff'}}
                                                         />
-                                                        <Legend '#94a3b8'}} '11px', color: height="{36}" verticalAlign="bottom" wrapperStyle="{{fontSize:"/>
+                                                        <Legend verticalAlign="bottom" height={36} wrapperStyle={{fontSize: '11px', color: '#94a3b8'}}/>
                                                     </PieChart>
                                                 </ResponsiveContainer>
                                             </div>
                                         </div>
 
                                         {/* Bar Chart: Comparativo de Viabilidade */}
-                                        <div className="bg-[#0b1325] p-6 rounded-2xl border border-slate-800">
+                                        <div className="bg-[#0b1325] p-6 rounded-2xl border border-slate-800 shadow-xl">
                                             <div className="flex justify-between items-start mb-4">
                                                 <h2 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2"><BarChart3 className="w-4 h-4"/> Projeção de Fatura Mensal</h2>
                                                 <div className="text-right">
@@ -544,57 +744,285 @@
                                                 </div>
                                             </div>
                                             <div className="h-56 mt-4">
-                                                <ResponsiveContainer height="100%" width="100%">
-                                                    <BarChart -20, 0, 5 5, bottom: data="{getComparativoData()}" left: margin="{{" right: top: }}>
-                                                        <CartesianGrid stroke="#1e293b" strokeDasharray="3 3" vertical="{false}"/>
-                                                        <XAxis '#94a3b8', 11}} axisLine="{false}" dataKey="name" fontSize: tick="{{fill:" tickLine="{false}"/>
-                                                        <YAxis '#94a3b8', 11}} axisLine="{false}" fontSize: tick="{{fill:" tickFormatter="{(value)" tickLine="{false}"> `R$${(value/1000).toFixed(0)}k`}/>
-                                                        <Tooltip formatter="{(value)"> formatCurrency(value)} contentStyle={{backgroundColor: '#0b1325', borderColor: '#334155', color: '#fff'}} cursor={{fill: '#1e293b', opacity: 0.4}}/>
-                                                        <Bar 0, 0]} 4, barSize="{40}" dataKey="Atual" fill="#ef4444" radius="{[4,"/>
-                                                        <Bar 0, 0]} 4, barSize="{40}" dataKey="Projetado" fill="#10b981" radius="{[4,"/>
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <BarChart data={getComparativoData()} margin={{ top: 5, right: 0, left: -20, bottom: 5 }}>
+                                                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                                                        <XAxis dataKey="name" tick={{fill: '#94a3b8', fontSize: 11}} axisLine={false} tickLine={false} />
+                                                        <YAxis tick={{fill: '#94a3b8', fontSize: 11}} axisLine={false} tickLine={false} tickFormatter={(value) => `R$${(value/1000).toFixed(0)}k`}/>
+                                                        <Tooltip formatter={(value) => formatCurrency(value)} contentStyle={{backgroundColor: '#0b1325', borderColor: '#334155', color: '#fff'}} cursor={{fill: '#1e293b', opacity: 0.4}}/>
+                                                        <Bar dataKey="Atual" fill="#ef4444" radius={[4, 4, 0, 0]} barSize={40} />
+                                                        <Bar dataKey="Projetado" fill="#10b981" radius={[4, 4, 0, 0]} barSize={40} />
                                                     </BarChart>
                                                 </ResponsiveContainer>
                                             </div>
                                         </div>
                                     </div>
 
-                                    {/* Insights (Texto) */}
-                                    <div className="bg-[#0b1325] p-6 rounded-2xl border border-slate-800">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <h2 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2"><Info className="w-4 h-4 text-emerald-500"/> Diagnóstico e Insights</h2>
-                                        </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            {analysis.alerts.map((alert, index) => (
-                                                <div key={index} className={`flex gap-3 p-3 rounded-xl border bg-[#060e1f] ${alert.type === 'danger' ? 'border-red-900/40' : alert.type === 'warning' ? 'border-yellow-900/40' : 'border-emerald-900/40'}`}>
-                                                    <div className="mt-0.5">{alert.icon}</div>
+                                    {/* Análise de Demanda Visual (Apenas Grupo A) */}
+                                    {analysis.grupoTarifario === 'A' && (
+                                        <div className="bg-[#0b1325] p-6 rounded-2xl shadow-xl border border-slate-800/80">
+                                            <div className="flex items-center justify-between mb-4">
+                                                <div className="flex items-center gap-2">
+                                                    <Activity className="w-5 h-5 text-blue-400" />
+                                                    <h2 className="text-sm font-bold text-white">Análise do Contrato de Demanda (kW)</h2>
+                                                </div>
+                                            </div>
+
+                                            <div className="relative pt-1">
+                                                <div className="flex mb-2 items-center justify-between">
                                                     <div>
-                                                        <h4 className={`text-xs font-bold mb-1 ${alert.type === 'danger' ? 'text-red-400' : alert.type === 'warning' ? 'text-yellow-400' : 'text-emerald-400'}`}>{alert.title}</h4>
-                                                        <p className="text-[11px] text-slate-300 leading-relaxed">{alert.message}</p>
+                                                        <span className={`text-xs font-bold inline-block px-2 py-1 rounded ${
+                                                            analysis.demandaMedida > analysis.demandaContratada * 1.05 ? 'bg-red-500/20 text-red-400' : 
+                                                            analysis.demandaMedida < analysis.demandaContratada * 0.9 ? 'bg-yellow-500/20 text-yellow-400' : 'bg-blue-500/20 text-blue-400'
+                                                        }`}>
+                                                            Utilizado: {analysis.demandaMedida} kW
+                                                        </span>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <span className="text-[11px] font-semibold inline-block text-slate-400 border border-slate-700 px-2 py-1 rounded">Contratado: {analysis.demandaContratada} kW</span>
+                                                    </div>
+                                                </div>
+                                                <div className="overflow-hidden h-4 mb-3 text-xs flex rounded-full bg-[#060e1f] border border-slate-800 shadow-inner">
+                                                    <div 
+                                                        style={{ width: `${Math.min((analysis.demandaMedida / analysis.demandaContratada) * 100, 100)}%` }} 
+                                                        className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center transition-all duration-1000 ease-out relative ${
+                                                            analysis.demandaMedida > analysis.demandaContratada * 1.05 ? 'bg-gradient-to-r from-red-600 to-red-400' : 
+                                                            analysis.demandaMedida < analysis.demandaContratada * 0.9 ? 'bg-gradient-to-r from-yellow-600 to-yellow-400' : 'bg-gradient-to-r from-blue-600 to-blue-400'
+                                                        }`}
+                                                    >
+                                                        <div className="absolute inset-0 bg-white/20 w-full h-full animate-[shimmer_2s_infinite]"></div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className="flex flex-col gap-1.5 mt-3 bg-[#060e1f] p-3 rounded-lg border border-slate-800/50">
+                                                    {analysis.percentualOcioso > 10 ? (
+                                                        <p className="text-[12px] text-yellow-400 font-medium flex items-center gap-1.5">
+                                                            <ArrowDownRight className="w-4 h-4"/> 
+                                                            <span>Demanda ociosa de <b>{analysis.percentualOcioso.toFixed(1)}%</b>. A empresa pagou R$ {analysis.custoOciosidade.toFixed(2)} por uma energia que não usou neste mês.</span>
+                                                        </p>
+                                                    ) : analysis.demandaMedida > analysis.demandaContratada * 1.05 ? (
+                                                        <p className="text-[12px] text-red-400 font-medium flex items-center gap-1.5">
+                                                            <TrendingUp className="w-4 h-4"/> 
+                                                            <span>Ultrapassagem do limite de 5% da ANEEL. Multa aplicada na fatura no valor de R$ {analysis.multaUltrapassagem.toFixed(2)}.</span>
+                                                        </p>
+                                                    ) : (
+                                                         <p className="text-[12px] text-blue-400 font-medium flex items-center gap-1.5">
+                                                            <CheckCircle2 className="w-4 h-4"/> 
+                                                            <span>Demanda ajustada perfeitamente ao contrato. Nenhum desperdício registrado.</span>
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Detalhamento de Custos (Composição Visual em Barras) */}
+                                    <div className="bg-[#0b1325] p-6 rounded-2xl shadow-xl border border-slate-800/80">
+                                        <div className="flex items-center gap-2 mb-6">
+                                            <BarChart3 className="w-5 h-5 text-emerald-500" />
+                                            <h2 className="text-sm font-bold text-white uppercase tracking-wider">Detalhamento Financeiro (TUSD/TE)</h2>
+                                        </div>
+                                        
+                                        <div className="space-y-4">
+                                            <div className="flex flex-col">
+                                                <div className="flex items-center justify-between mb-1.5">
+                                                    <span className="text-xs font-semibold text-slate-300 flex items-center gap-2">
+                                                        <div className="w-2.5 h-2.5 rounded bg-emerald-500"></div> Energia Ativa {analysis.grupoTarifario === 'A' ? '(Fora de Ponta)' : ''}
+                                                    </span>
+                                                    <span className="text-sm font-bold text-white">{formatCurrency(analysis.custoEnergia)}</span>
+                                                </div>
+                                                <div className="w-full bg-[#060e1f] rounded-full h-2 shadow-inner">
+                                                    <div className="bg-gradient-to-r from-emerald-600 to-emerald-400 h-2 rounded-full transition-all duration-1000" style={{ width: `${Math.max((analysis.custoEnergia/analysis.custoTotal)*100, 1)}%` }}></div>
+                                                </div>
+                                            </div>
+
+                                            {analysis.grupoTarifario === 'A' && analysis.custoEnergiaPonta > 0 && (
+                                                <div className="flex flex-col pt-1">
+                                                    <div className="flex items-center justify-between mb-1.5">
+                                                        <span className="text-xs font-semibold text-slate-300 flex items-center gap-2">
+                                                            <div className="w-2.5 h-2.5 rounded bg-orange-500"></div> Energia Ativa (Horário de Ponta)
+                                                        </span>
+                                                        <span className="text-sm font-bold text-orange-400">{formatCurrency(analysis.custoEnergiaPonta)}</span>
+                                                    </div>
+                                                    <div className="w-full bg-[#060e1f] rounded-full h-2 shadow-inner">
+                                                        <div className="bg-gradient-to-r from-orange-600 to-orange-400 h-2 rounded-full transition-all duration-1000" style={{ width: `${Math.max((analysis.custoEnergiaPonta/analysis.custoTotal)*100, 1)}%` }}></div>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {analysis.grupoTarifario === 'A' && analysis.custoDemandaBase > 0 && (
+                                                <div className="flex flex-col pt-1">
+                                                    <div className="flex items-center justify-between mb-1.5">
+                                                        <span className="text-xs font-semibold text-slate-300 flex items-center gap-2">
+                                                            <div className="w-2.5 h-2.5 rounded bg-blue-500"></div> Demanda Contratada Faturada
+                                                        </span>
+                                                        <span className="text-sm font-bold text-white">{formatCurrency(analysis.custoDemandaBase)}</span>
+                                                    </div>
+                                                    <div className="w-full bg-[#060e1f] rounded-full h-2 shadow-inner">
+                                                        <div className="bg-gradient-to-r from-blue-600 to-blue-400 h-2 rounded-full transition-all duration-1000" style={{ width: `${Math.max((analysis.custoDemandaBase/analysis.custoTotal)*100, 1)}%` }}></div>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {analysis.custoImpostos > 0 && (
+                                                <div className="flex flex-col pt-1">
+                                                    <div className="flex items-center justify-between mb-1.5">
+                                                        <span className="text-xs font-semibold text-slate-300 flex items-center gap-2">
+                                                            <div className="w-2.5 h-2.5 rounded bg-purple-500"></div> Impostos / Adicionais Lançados
+                                                        </span>
+                                                        <span className="text-sm font-bold text-white">{formatCurrency(analysis.custoImpostos)}</span>
+                                                    </div>
+                                                    <div className="w-full bg-[#060e1f] rounded-full h-2 shadow-inner">
+                                                        <div className="bg-gradient-to-r from-purple-600 to-purple-400 h-2 rounded-full transition-all duration-1000" style={{ width: `${Math.max((analysis.custoImpostos/analysis.custoTotal)*100, 1)}%` }}></div>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {analysis.custoBandeiras > 0 && (
+                                                <div className="flex flex-col pt-1">
+                                                    <div className="flex items-center justify-between mb-1.5">
+                                                        <span className="text-xs font-semibold text-slate-300 flex items-center gap-2">
+                                                            <div className="w-2.5 h-2.5 rounded bg-yellow-400"></div> Bandeira Tarifária (Escassez Hídrica)
+                                                        </span>
+                                                        <span className="text-sm font-bold text-white">{formatCurrency(analysis.custoBandeiras)}</span>
+                                                    </div>
+                                                    <div className="w-full bg-[#060e1f] rounded-full h-2 shadow-inner">
+                                                        <div className="bg-gradient-to-r from-yellow-500 to-yellow-300 h-2 rounded-full transition-all duration-1000" style={{ width: `${Math.max((analysis.custoBandeiras/analysis.custoTotal)*100, 1)}%` }}></div>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {analysis.multaUltrapassagem > 0 && (
+                                                <div className="flex flex-col pt-1">
+                                                    <div className="flex items-center justify-between mb-1.5">
+                                                        <span className="text-xs font-semibold text-red-400 flex items-center gap-2">
+                                                            <div className="w-2.5 h-2.5 rounded bg-red-500 animate-pulse"></div> Multa de Ultrapassagem (Demanda)
+                                                        </span>
+                                                        <span className="text-sm font-bold text-red-400">{formatCurrency(analysis.multaUltrapassagem)}</span>
+                                                    </div>
+                                                    <div className="w-full bg-[#060e1f] rounded-full h-2 shadow-inner">
+                                                        <div className="bg-gradient-to-r from-red-600 to-red-400 h-2 rounded-full transition-all duration-1000" style={{ width: `${Math.max((analysis.multaUltrapassagem/analysis.custoTotal)*100, 1)}%` }}></div>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {analysis.custoReativo > 0 && (
+                                                <div className="flex flex-col pt-1">
+                                                    <div className="flex items-center justify-between mb-1.5">
+                                                        <span className="text-xs font-semibold text-rose-400 flex items-center gap-2">
+                                                            <div className="w-2.5 h-2.5 rounded bg-rose-500 animate-pulse"></div> Multa de Energia Reativa (FER)
+                                                        </span>
+                                                        <span className="text-sm font-bold text-rose-400">{formatCurrency(analysis.custoReativo)}</span>
+                                                    </div>
+                                                    <div className="w-full bg-[#060e1f] rounded-full h-2 shadow-inner">
+                                                        <div className="bg-gradient-to-r from-rose-600 to-rose-400 h-2 rounded-full transition-all duration-1000" style={{ width: `${Math.max((analysis.custoReativo/analysis.custoTotal)*100, 1)}%` }}></div>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {analysis.custoAtraso > 0 && (
+                                                <div className="flex flex-col pt-1">
+                                                    <div className="flex items-center justify-between mb-1.5">
+                                                        <span className="text-xs font-semibold text-rose-500 flex items-center gap-2">
+                                                            <div className="w-2.5 h-2.5 rounded bg-rose-600 animate-pulse"></div> Juros / Multa por Atraso
+                                                        </span>
+                                                        <span className="text-sm font-bold text-rose-500">{formatCurrency(analysis.custoAtraso)}</span>
+                                                    </div>
+                                                    <div className="w-full bg-[#060e1f] rounded-full h-2 shadow-inner">
+                                                        <div className="bg-gradient-to-r from-rose-700 to-rose-500 h-2 rounded-full transition-all duration-1000" style={{ width: `${Math.max((analysis.custoAtraso/analysis.custoTotal)*100, 1)}%` }}></div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            
+                                            {analysis.grupoTarifario === 'B' && analysis.custoIluminacao > 0 && (
+                                                <div className="flex flex-col pt-1">
+                                                    <div className="flex items-center justify-between mb-1.5">
+                                                        <span className="text-xs font-semibold text-slate-300 flex items-center gap-2">
+                                                            <div className="w-2.5 h-2.5 rounded bg-yellow-600"></div> Taxa de Iluminação (COSIP)
+                                                        </span>
+                                                        <span className="text-sm font-bold text-white">{formatCurrency(analysis.custoIluminacao)}</span>
+                                                    </div>
+                                                    <div className="w-full bg-[#060e1f] rounded-full h-2 shadow-inner">
+                                                        <div className="bg-gradient-to-r from-yellow-700 to-yellow-600 h-2 rounded-full transition-all duration-1000" style={{ width: `${Math.max((analysis.custoIluminacao/analysis.custoTotal)*100, 1)}%` }}></div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Insights */}
+                                    <div className="bg-[#0b1325] p-6 rounded-2xl shadow-xl border border-slate-800/80">
+                                        <div className="flex items-center justify-between mb-6">
+                                            <div className="flex items-center gap-2">
+                                                <Info className="w-5 h-5 text-emerald-500" />
+                                                <h2 className="text-sm font-bold text-white uppercase tracking-wider">Diagnóstico ENGER</h2>
+                                            </div>
+                                            <span className="text-[10px] uppercase font-bold bg-[#060e1f] text-slate-400 px-3 py-1 rounded-full border border-slate-800">{analysis.alerts.length} Insights</span>
+                                        </div>
+                                        
+                                        <div className="space-y-4">
+                                            {analysis.alerts.map((alert, index) => (
+                                                <div 
+                                                    key={index} 
+                                                    className={`flex gap-4 p-4 rounded-xl border bg-[#060e1f] transition-all hover:-translate-y-1 ${
+                                                        alert.type === 'danger' ? 'border-red-900/40 shadow-[0_4px_20px_rgba(239,68,68,0.06)]' : 
+                                                        alert.type === 'warning' ? 'border-yellow-900/40 shadow-[0_4px_20px_rgba(234,179,8,0.06)]' : 
+                                                        alert.type === 'info' ? 'border-blue-900/40 shadow-[0_4px_20px_rgba(59,130,246,0.06)]' :
+                                                        'border-emerald-900/40 shadow-[0_4px_20px_rgba(16,185,129,0.06)]'
+                                                    }`}
+                                                >
+                                                    <div className="mt-0.5 p-2 bg-[#0b1325] rounded-lg shrink-0 h-fit border border-slate-800/50">
+                                                        {alert.icon}
+                                                    </div>
+                                                    <div>
+                                                        <h4 className={`text-sm font-bold mb-1.5 ${
+                                                            alert.type === 'danger' ? 'text-red-400' : 
+                                                            alert.type === 'warning' ? 'text-yellow-400' : 
+                                                            alert.type === 'info' ? 'text-blue-400' :
+                                                            'text-emerald-400'
+                                                        }`}>
+                                                            {alert.title}
+                                                        </h4>
+                                                        <p className="text-[13px] text-slate-300 leading-relaxed font-medium">
+                                                            {alert.message}
+                                                        </p>
                                                     </div>
                                                 </div>
                                             ))}
                                         </div>
+                                        
+                                        {/* CTA Action Modificado no Final */}
+                                        <div className="mt-8 pt-6 border-t border-slate-800/60">
+                                            <button 
+                                                onClick={handleGeneratePDF}
+                                                disabled={isGeneratingPDF}
+                                                className={`w-full py-5 px-6 rounded-xl font-bold flex items-center justify-center gap-3 transition-all ${isGeneratingPDF ? 'bg-slate-700 text-slate-400 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.2)] hover:-translate-y-1'}`}
+                                            >
+                                                <FileText className={`w-6 h-6 ${isGeneratingPDF ? 'animate-bounce' : ''}`} />
+                                                <span className="text-lg uppercase tracking-wider">{isGeneratingPDF ? 'Gerando Apresentação PDF...' : 'Exportar Proposta Comercial (Slide)'}</span>
+                                            </button>
+                                            <p className="text-center text-[10px] text-slate-500 mt-4 uppercase tracking-wider font-semibold">
+                                                Motor de cálculo baseado nas resoluções normativas 1.000/2021 (ANEEL)
+                                            </p>
+                                        </div>
                                     </div>
-
-                                    {/* Botão de Geração de PDF */}
-                                    <button 
-                                        onClick={handleGeneratePDF}
-                                        disabled={isGeneratingPDF}
-                                        className={`w-full py-5 px-6 rounded-xl font-bold flex items-center justify-center gap-3 transition-all ${isGeneratingPDF ? 'bg-slate-700 text-slate-400 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.2)] hover:-translate-y-1'}`}
-                                    >
-                                        <FileText ${isGeneratingPDF ''}`} 'animate-bounce' : ? className="{`w-6" h-6/>
-                                        <span className="text-lg uppercase tracking-wider">{isGeneratingPDF ? 'Gerando Apresentação...' : 'Exportar Proposta Comercial (Slide PDF)'}</span>
-                                    </button>
                                 </>
                             )}
                         </div>
                     </div>
+                    
+                    {/* CSS Animation Keyframes inline */}
+                    <style dangerouslySetInnerHTML={{__html: `
+                        @keyframes shimmer {
+                            100% { transform: translateX(100%); }
+                        }
+                    `}} />
                 </div>
             );
         };
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App/>);
+        root.render(<App />);
     </script>
 </body>
 </html>
