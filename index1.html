@@ -5,19 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ENGER Analytics v4.0 - Pro</title>
     
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
     
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script crossorigin src="[https://unpkg.com/react@18/umd/react.production.min.js](https://unpkg.com/react@18/umd/react.production.min.js)"></script>
+    <script crossorigin src="[https://unpkg.com/react-dom@18/umd/react-dom.production.min.js](https://unpkg.com/react-dom@18/umd/react-dom.production.min.js)"></script>
+    <script src="[https://unpkg.com/@babel/standalone/babel.min.js](https://unpkg.com/@babel/standalone/babel.min.js)"></script>
 
     <!-- Recharts para Gráficos Visuais -->
-    <script src="https://unpkg.com/prop-types/prop-types.min.js"></script>
-    <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
+    <script src="[https://unpkg.com/prop-types/prop-types.min.js](https://unpkg.com/prop-types/prop-types.min.js)"></script>
+    <script src="[https://unpkg.com/recharts/umd/Recharts.js](https://unpkg.com/recharts/umd/Recharts.js)"></script>
 
     <!-- Bibliotecas pdfmake -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.9/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.9/vfs_fonts.min.js"></script>
+    <script src="[https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.9/pdfmake.min.js](https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.9/pdfmake.min.js)"></script>
+    <script src="[https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.9/vfs_fonts.min.js](https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.9/vfs_fonts.min.js)"></script>
 
     <style>
         body { 
@@ -46,26 +46,26 @@
         );
 
         // Ícones
-        const AlertCircle = ({ className }) => <IconBase className={className}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></IconBase>;
-        const CheckCircle2 = ({ className }) => <IconBase className={className}><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></IconBase>;
-        const TrendingDown = ({ className }) => <IconBase className={className}><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></IconBase>;
-        const TrendingUp = ({ className }) => <IconBase className={className}><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></IconBase>;
-        const Zap = ({ className }) => <IconBase className={className}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></IconBase>;
-        const DollarSign = ({ className }) => <IconBase className={className}><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></IconBase>;
-        const Activity = ({ className }) => <IconBase className={className}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></IconBase>;
-        const Settings = ({ className }) => <IconBase className={className}><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></IconBase>;
-        const BarChart3 = ({ className }) => <IconBase className={className}><path d="M3 3v18h18"/><rect width="4" height="7" x="7" y="10" rx="1"/><rect width="4" height="12" x="15" y="5" rx="1"/></IconBase>;
-        const Info = ({ className }) => <IconBase className={className}><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></IconBase>;
-        const MapPin = ({ className }) => <IconBase className={className}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></IconBase>;
-        const Factory = ({ className }) => <IconBase className={className}><path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M17 18h1"/><path d="M12 18h1"/><path d="M7 18h1"/></IconBase>;
-        const Tractor = ({ className }) => <IconBase className={className}><path d="m10 11 11 .9c.6 0 .9.5.8 1.1l-.8 5h-1"/><path d="M16 18h-5"/><path d="M18 5a1 1 0 0 0-1 1v5.573"/><path d="M3 4h9l1 7.246"/><path d="M4 11V4"/><path d="M7 15h.01"/><path d="M8 10.1V4"/><circle cx="18" cy="18" r="2"/><circle cx="7" cy="15" r="4"/></IconBase>;
-        const Home = ({ className }) => <IconBase className={className}><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></IconBase>;
-        const Building2 = ({ className }) => <IconBase className={className}><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></IconBase>;
-        const Landmark = ({ className }) => <IconBase className={className}><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></IconBase>;
-        const FileText = ({ className }) => <IconBase className={className}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></IconBase>;
-        const ArrowDownRight = ({ className }) => <IconBase className={className}><path d="m7 7 10 10"/><path d="M17 7v10H7"/></IconBase>;
-        const Wand2 = ({ className }) => <IconBase className={className}><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></IconBase>;
-        const Calculator = ({ className }) => <IconBase className={className}><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16.01" y1="14" y2="14"/><line x1="12" x2="12.01" y1="14" y2="14"/><line x1="8" x2="8.01" y1="14" y2="14"/><line x1="16" x2="16.01" y1="10" y2="10"/><line x1="12" x2="12.01" y1="10" y2="10"/><line x1="8" x2="8.01" y1="10" y2="10"/><line x1="16" x2="16.01" y1="18" y2="18"/><line x1="12" x2="12.01" y1="18" y2="18"/><line x1="8" x2="8.01" y1="18" y2="18"/></IconBase>;
+        const AlertCircle = ({ className }) => <IconBase className="{className}"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></IconBase>;
+        const CheckCircle2 = ({ className }) => <IconBase className="{className}"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></IconBase>;
+        const TrendingDown = ({ className }) => <IconBase className="{className}"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></IconBase>;
+        const TrendingUp = ({ className }) => <IconBase className="{className}"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></IconBase>;
+        const Zap = ({ className }) => <IconBase className="{className}"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></IconBase>;
+        const DollarSign = ({ className }) => <IconBase className="{className}"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></IconBase>;
+        const Activity = ({ className }) => <IconBase className="{className}"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></IconBase>;
+        const Settings = ({ className }) => <IconBase className="{className}"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></IconBase>;
+        const BarChart3 = ({ className }) => <IconBase className="{className}"><path d="M3 3v18h18"/><rect width="4" height="7" x="7" y="10" rx="1"/><rect width="4" height="12" x="15" y="5" rx="1"/></IconBase>;
+        const Info = ({ className }) => <IconBase className="{className}"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></IconBase>;
+        const MapPin = ({ className }) => <IconBase className="{className}"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></IconBase>;
+        const Factory = ({ className }) => <IconBase className="{className}"><path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M17 18h1"/><path d="M12 18h1"/><path d="M7 18h1"/></IconBase>;
+        const Tractor = ({ className }) => <IconBase className="{className}"><path d="m10 11 11 .9c.6 0 .9.5.8 1.1l-.8 5h-1"/><path d="M16 18h-5"/><path d="M18 5a1 1 0 0 0-1 1v5.573"/><path d="M3 4h9l1 7.246"/><path d="M4 11V4"/><path d="M7 15h.01"/><path d="M8 10.1V4"/><circle cx="18" cy="18" r="2"/><circle cx="7" cy="15" r="4"/></IconBase>;
+        const Home = ({ className }) => <IconBase className="{className}"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></IconBase>;
+        const Building2 = ({ className }) => <IconBase className="{className}"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></IconBase>;
+        const Landmark = ({ className }) => <IconBase className="{className}"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></IconBase>;
+        const FileText = ({ className }) => <IconBase className="{className}"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></IconBase>;
+        const ArrowDownRight = ({ className }) => <IconBase className="{className}"><path d="m7 7 10 10"/><path d="M17 7v10H7"/></IconBase>;
+        const Wand2 = ({ className }) => <IconBase className="{className}"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></IconBase>;
+        const Calculator = ({ className }) => <IconBase className="{className}"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16.01" y1="14" y2="14"/><line x1="12" x2="12.01" y1="14" y2="14"/><line x1="8" x2="8.01" y1="14" y2="14"/><line x1="16" x2="16.01" y1="10" y2="10"/><line x1="12" x2="12.01" y1="10" y2="10"/><line x1="8" x2="8.01" y1="10" y2="10"/><line x1="16" x2="16.01" y1="18" y2="18"/><line x1="12" x2="12.01" y1="18" y2="18"/><line x1="8" x2="8.01" y1="18" y2="18"/></IconBase>;
 
         const App = () => {
             const bancoTarifas = {
@@ -108,11 +108,11 @@
             const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
             const classesConsumo = [
-                { id: 'Comercial', label: 'Comercial / Serviços', icon: <Building2 className="w-4 h-4" /> },
-                { id: 'Industrial', label: 'Industrial', icon: <Factory className="w-4 h-4" /> },
-                { id: 'Rural', label: 'Rural (Agro)', icon: <Tractor className="w-4 h-4" /> },
-                { id: 'Residencial', label: 'Residencial', icon: <Home className="w-4 h-4" /> },
-                { id: 'Publico', label: 'Poder Público', icon: <Landmark className="w-4 h-4" /> },
+                { id: 'Comercial', label: 'Comercial / Serviços', icon: <Building2 className="w-4 h-4"/> },
+                { id: 'Industrial', label: 'Industrial', icon: <Factory className="w-4 h-4"/> },
+                { id: 'Rural', label: 'Rural (Agro)', icon: <Tractor className="w-4 h-4"/> },
+                { id: 'Residencial', label: 'Residencial', icon: <Home className="w-4 h-4"/> },
+                { id: 'Publico', label: 'Poder Público', icon: <Landmark className="w-4 h-4"/> },
             ];
 
             useEffect(() => {
@@ -153,7 +153,7 @@
                     alerts.push({
                         type: 'info', title: 'Benefício Tarifário Rural',
                         message: `Verifique se a ${concessionaria} está aplicando o subsídio (exige recadastramento periódico).`,
-                        icon: <Tractor className="text-blue-400 w-5 h-5" />
+                        icon: <Tractor className="text-blue-400 w-5 h-5"/>
                     });
                 }
 
@@ -174,9 +174,9 @@
                     economiaSolar = (custoEnergia + custoEnergiaPonta) * 0.85; 
                     economiaGDCompartilhada = (custoEnergia + custoEnergiaPonta) * 0.15; 
 
-                    if (multaUltrapassagem > 0) alerts.push({ type: 'danger', title: 'Multa por Ultrapassagem de Demanda', message: `A demanda medida excedeu o contrato. A ${concessionaria} cobrou multa severa.`, icon: <TrendingUp className="text-red-400 w-5 h-5" /> });
-                    if (percentualOcioso > 10) alerts.push({ type: 'warning', title: 'Desperdício: Demanda Ociosa', message: `O cliente utilizou ${percentualOcioso.toFixed(1)}% a menos do que contratou.`, icon: <ArrowDownRight className="text-yellow-400 w-5 h-5" /> });
-                    if (custoReativo > 0) alerts.push({ type: 'danger', title: 'Multa de Energia Reativa (Baixo FP)', message: `Multa de R$ ${custoReativo.toFixed(2)} identificada. Instale banco de capacitores.`, icon: <Zap className="text-red-400 w-5 h-5" /> });
+                    if (multaUltrapassagem > 0) alerts.push({ type: 'danger', title: 'Multa por Ultrapassagem de Demanda', message: `A demanda medida excedeu o contrato. A ${concessionaria} cobrou multa severa.`, icon: <TrendingUp className="text-red-400 w-5 h-5"/> });
+                    if (percentualOcioso > 10) alerts.push({ type: 'warning', title: 'Desperdício: Demanda Ociosa', message: `O cliente utilizou ${percentualOcioso.toFixed(1)}% a menos do que contratou.`, icon: <ArrowDownRight className="text-yellow-400 w-5 h-5"/> });
+                    if (custoReativo > 0) alerts.push({ type: 'danger', title: 'Multa de Energia Reativa (Baixo FP)', message: `Multa de R$ ${custoReativo.toFixed(2)} identificada. Instale banco de capacitores.`, icon: <Zap className="text-red-400 w-5 h-5"/> });
 
                 } else {
                     custoEnergia = consumoAtivo * tarifaConsumo;
@@ -184,10 +184,10 @@
                     potencialEconomia = custoAtraso; 
                     economiaSolar = custoEnergia * 0.90; 
                     economiaGDCompartilhada = custoEnergia * 0.15; 
-                    alerts.push({ type: 'success', title: 'Excelente para Fotovoltaico', message: `Perfil ideal. Economia de aprox. R$ ${economiaSolar.toFixed(2)}/mês.`, icon: <Zap className="text-emerald-400 w-5 h-5" /> });
+                    alerts.push({ type: 'success', title: 'Excelente para Fotovoltaico', message: `Perfil ideal. Economia de aprox. R$ ${economiaSolar.toFixed(2)}/mês.`, icon: <Zap className="text-emerald-400 w-5 h-5"/> });
                 }
 
-                if (custoAtraso > 0) alerts.push({ type: 'danger', title: 'Gestão Financeira: Juros / Multas', message: `Foram identificados R$ ${custoAtraso.toFixed(2)} em multas por atraso.`, icon: <DollarSign className="text-red-400 w-5 h-5" /> });
+                if (custoAtraso > 0) alerts.push({ type: 'danger', title: 'Gestão Financeira: Juros / Multas', message: `Foram identificados R$ ${custoAtraso.toFixed(2)} em multas por atraso.`, icon: <DollarSign className="text-red-400 w-5 h-5"/> });
 
                 // CÁLCULO DE ROI E PAYBACK (Usina Solar Própria)
                 const geracaoTotalKwh = consumoAtivo + (parseFloat(consumoPonta) || 0);
@@ -398,7 +398,7 @@
                         <div className="flex items-center gap-3">
                             <div className="bg-emerald-500 p-2.5 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.25)] relative overflow-hidden">
                                 <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
-                                <Zap className="text-[#060e1f] w-6 h-6 relative z-10" />
+                                <Zap className="text-[#060e1f] w-6 h-6 relative z-10"/>
                             </div>
                             <div>
                                 <h1 className="text-2xl font-extrabold text-white tracking-tight">ENGER <span className="text-emerald-500">Analytics</span> <span className="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full ml-1 align-top">PRO</span></h1>
@@ -413,7 +413,7 @@
                         <div className="xl:col-span-4 space-y-6">
                             <div className="bg-[#0b1325] p-5 rounded-2xl shadow-2xl border border-slate-800/80">
                                 <div className="flex items-center gap-2 mb-5 pb-3 border-b border-slate-800/60">
-                                    <Settings className="w-5 h-5 text-emerald-500" />
+                                    <Settings className="w-5 h-5 text-emerald-500"/>
                                     <h2 className="text-lg font-bold text-white">Parâmetros da Fatura</h2>
                                 </div>
                                 <form className="space-y-5">
@@ -421,7 +421,7 @@
                                         <div className="grid grid-cols-1 gap-4">
                                             <div>
                                                 <label className="block text-xs font-medium text-slate-400 mb-1.5 flex items-center justify-between">
-                                                    <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> Concessionária</span>
+                                                    <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5"/> Concessionária</span>
                                                     {autoFilled && <span className="text-[9px] text-emerald-400 flex items-center gap-1 bg-emerald-900/30 px-1.5 py-0.5 rounded"><Wand2 className="w-2.5 h-2.5"/> Auto</span>}
                                                 </label>
                                                 <select name="concessionaria" value={formData.concessionaria} onChange={handleInputChange} className="w-full px-3 py-2.5 bg-[#060e1f] border border-slate-700/80 text-white rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm cursor-pointer">
@@ -517,19 +517,18 @@
                                         <div className="bg-[#0b1325] p-6 rounded-2xl border border-slate-800">
                                             <h2 className="text-sm font-bold text-white uppercase tracking-wider mb-4 flex items-center gap-2"><PieChart className="w-4 h-4"/> Composição de Custos</h2>
                                             <div className="h-64">
-                                                <ResponsiveContainer width="100%" height="100%">
+                                                <ResponsiveContainer height="100%" width="100%">
                                                     <PieChart>
-                                                        <Pie data={getChartData()} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
+                                                        <Pie cx="50%" cy="50%" data="{getChartData()}" dataKey="value" innerRadius="{60}" outerRadius="{80}" paddingAngle="{5}">
                                                             {getChartData().map((entry, index) => (
-                                                                <Cell key={`cell-${index}`} fill={entry.color} />
+                                                                <Cell fill="{entry.color}" key="{`cell-${index}`}"/>
                                                             ))}
                                                         </Pie>
-                                                        <Tooltip 
-                                                            formatter={(value) => formatCurrency(value)} 
+                                                        <Tooltip formatter="{(value)"> formatCurrency(value)} 
                                                             contentStyle={{backgroundColor: '#0b1325', borderColor: '#334155', color: '#fff'}}
                                                             itemStyle={{color: '#fff'}}
                                                         />
-                                                        <Legend verticalAlign="bottom" height={36} wrapperStyle={{fontSize: '11px', color: '#94a3b8'}}/>
+                                                        <Legend '#94a3b8'}} '11px', color: height="{36}" verticalAlign="bottom" wrapperStyle="{{fontSize:"/>
                                                     </PieChart>
                                                 </ResponsiveContainer>
                                             </div>
@@ -545,14 +544,14 @@
                                                 </div>
                                             </div>
                                             <div className="h-56 mt-4">
-                                                <ResponsiveContainer width="100%" height="100%">
-                                                    <BarChart data={getComparativoData()} margin={{ top: 5, right: 0, left: -20, bottom: 5 }}>
-                                                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-                                                        <XAxis dataKey="name" tick={{fill: '#94a3b8', fontSize: 11}} axisLine={false} tickLine={false} />
-                                                        <YAxis tick={{fill: '#94a3b8', fontSize: 11}} axisLine={false} tickLine={false} tickFormatter={(value) => `R$${(value/1000).toFixed(0)}k`}/>
-                                                        <Tooltip formatter={(value) => formatCurrency(value)} contentStyle={{backgroundColor: '#0b1325', borderColor: '#334155', color: '#fff'}} cursor={{fill: '#1e293b', opacity: 0.4}}/>
-                                                        <Bar dataKey="Atual" fill="#ef4444" radius={[4, 4, 0, 0]} barSize={40} />
-                                                        <Bar dataKey="Projetado" fill="#10b981" radius={[4, 4, 0, 0]} barSize={40} />
+                                                <ResponsiveContainer height="100%" width="100%">
+                                                    <BarChart -20, 0, 5 5, bottom: data="{getComparativoData()}" left: margin="{{" right: top: }}>
+                                                        <CartesianGrid stroke="#1e293b" strokeDasharray="3 3" vertical="{false}"/>
+                                                        <XAxis '#94a3b8', 11}} axisLine="{false}" dataKey="name" fontSize: tick="{{fill:" tickLine="{false}"/>
+                                                        <YAxis '#94a3b8', 11}} axisLine="{false}" fontSize: tick="{{fill:" tickFormatter="{(value)" tickLine="{false}"> `R$${(value/1000).toFixed(0)}k`}/>
+                                                        <Tooltip formatter="{(value)"> formatCurrency(value)} contentStyle={{backgroundColor: '#0b1325', borderColor: '#334155', color: '#fff'}} cursor={{fill: '#1e293b', opacity: 0.4}}/>
+                                                        <Bar 0, 0]} 4, barSize="{40}" dataKey="Atual" fill="#ef4444" radius="{[4,"/>
+                                                        <Bar 0, 0]} 4, barSize="{40}" dataKey="Projetado" fill="#10b981" radius="{[4,"/>
                                                     </BarChart>
                                                 </ResponsiveContainer>
                                             </div>
@@ -562,7 +561,7 @@
                                     {/* Insights (Texto) */}
                                     <div className="bg-[#0b1325] p-6 rounded-2xl border border-slate-800">
                                         <div className="flex items-center justify-between mb-4">
-                                            <h2 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2"><Info className="w-4 h-4 text-emerald-500" /> Diagnóstico e Insights</h2>
+                                            <h2 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2"><Info className="w-4 h-4 text-emerald-500"/> Diagnóstico e Insights</h2>
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             {analysis.alerts.map((alert, index) => (
@@ -583,7 +582,7 @@
                                         disabled={isGeneratingPDF}
                                         className={`w-full py-5 px-6 rounded-xl font-bold flex items-center justify-center gap-3 transition-all ${isGeneratingPDF ? 'bg-slate-700 text-slate-400 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.2)] hover:-translate-y-1'}`}
                                     >
-                                        <FileText className={`w-6 h-6 ${isGeneratingPDF ? 'animate-bounce' : ''}`} />
+                                        <FileText ${isGeneratingPDF ''}`} 'animate-bounce' : ? className="{`w-6" h-6/>
                                         <span className="text-lg uppercase tracking-wider">{isGeneratingPDF ? 'Gerando Apresentação...' : 'Exportar Proposta Comercial (Slide PDF)'}</span>
                                     </button>
                                 </>
@@ -595,18 +594,8 @@
         };
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        root.render(<App/>);
     </script>
 </body>
 </html>
 ```eof
-
-### Grandes Mudanças Realizadas:
-
-1. **Dashboard turbinado com `Recharts`:** Onde antes haviam apenas barrinhas lineares, agora você tem 2 gráficos dinâmicos sensacionais em tela. Um Donut para mostrar quanto da fatura é desperdício (isso vende muito!), e um gráfico de barras comparando "Fatura Atual" vs "Fatura Projetada".
-2. **Motor de Viabilidade (ROI):** Adicionei campos de cálculo de CAPEX (Quanto custaria o sistema em R$), o tamanho mínimo (kWp) necessário, os anos de Payback e a rentabilidade acumulada de 10 anos em porcentagem.
-3. **Novo Formato do PDF (Slide Executivo):**
-   - O documento agora sai no formato Paisagem (Deitado).
-   - O fundo do PDF é totalmente escuro com fontes brancas (Dark Mode Corporativo), parecendo uma apresentação do PowerPoint moderna de alto nível.
-   - Os gráficos de barra de dentro do PDF foram reconstruídos nativamente com o motor de renderização visual (Tabelas sem bordas com preenchimento colorido para simular gráficos sem perda de qualidade / pixels). 
-   - Foi dividido perfeitamente em páginas: Capa -> Desperdícios -> ROI Financeiro -> Alertas!
