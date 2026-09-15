@@ -1,0 +1,1833 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENGER Analytics v4.0</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- html2pdf.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        body { 
+            background-color: #060e1f; 
+            color: #e2e8f0; 
+            font-family: system-ui, -apple-system, sans-serif; 
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0b1325; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const IconBase = ({ className, children }) => (
+            <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                {children}
+            </svg>
+        );
+
+        const AlertCircle = ({ className }) => <IconBase className={className}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></IconBase>;
+        const CheckCircle2 = ({ className }) => <IconBase className={className}><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></IconBase>;
+        const TrendingDown = ({ className }) => <IconBase className={className}><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></IconBase>;
+        const TrendingUp = ({ className }) => <IconBase className={className}><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></IconBase>;
+        const Zap = ({ className }) => <IconBase className={className}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></IconBase>;
+        const DollarSign = ({ className }) => <IconBase className={className}><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></IconBase>;
+        const Activity = ({ className }) => <IconBase className={className}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></IconBase>;
+        const Settings = ({ className }) => <IconBase className={className}><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></IconBase>;
+        const BarChart3 = ({ className }) => <IconBase className={className}><path d="M3 3v18h18"/><rect width="4" height="7" x="7" y="10" rx="1"/><rect width="4" height="12" x="15" y="5" rx="1"/></IconBase>;
+        const Info = ({ className }) => <IconBase className={className}><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></IconBase>;
+        const MapPin = ({ className }) => <IconBase className={className}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></IconBase>;
+        const Factory = ({ className }) => <IconBase className={className}><path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M17 18h1"/><path d="M12 18h1"/><path d="M7 18h1"/></IconBase>;
+        const Tractor = ({ className }) => <IconBase className={className}><path d="m10 11 11 .9c.6 0 .9.5.8 1.1l-.8 5h-1"/><path d="M16 18h-5"/><path d="M18 5a1 1 0 0 0-1 1v5.573"/><path d="M3 4h9l1 7.246"/><path d="M4 11V4"/><path d="M7 15h.01"/><path d="M8 10.1V4"/><circle cx="18" cy="18" r="2"/><circle cx="7" cy="15" r="4"/></IconBase>;
+        const Home = ({ className }) => <IconBase className={className}><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></IconBase>;
+        const Building2 = ({ className }) => <IconBase className={className}><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></IconBase>;
+        const Landmark = ({ className }) => <IconBase className={className}><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></IconBase>;
+        const FileText = ({ className }) => <IconBase className={className}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></IconBase>;
+        const ArrowDownRight = ({ className }) => <IconBase className={className}><path d="m7 7 10 10"/><path d="M17 7v10H7"/></IconBase>;
+        const Wand2 = ({ className }) => <IconBase className={className}><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></IconBase>;
+
+        // New Icons
+        const PieChartIcon = ({className}) => <IconBase className={className}><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></IconBase>;
+        const Target = ({className}) => <IconBase className={className}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></IconBase>;
+        const Calendar = ({className}) => <IconBase className={className}><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></IconBase>;
+        const Sun = ({className}) => <IconBase className={className}><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></IconBase>;
+        const Wallet = ({className}) => <IconBase className={className}><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></IconBase>;
+        const Clock = ({className}) => <IconBase className={className}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></IconBase>;
+        const RefreshCw = ({className}) => <IconBase className={className}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></IconBase>;
+
+        // Chart Components
+        const DonutChart = ({ data, total, formatCurrency }) => {
+            const radius = 60;
+            const circumference = 2 * Math.PI * radius;
+            const size = 160;
+            const center = size / 2;
+            let cumulative = 0;
+            const segments = data.filter(d => d.value > 0).map((item) => {
+                const pct = total > 0 ? item.value / total : 0;
+                const offset = cumulative;
+                cumulative += pct;
+                return { ...item, pct, offset };
+            });
+
+            return (
+                <div className="flex flex-col sm:flex-row items-center gap-6">
+                    <div className="relative" style={{ width: size, height: size }}>
+                        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="transform -rotate-90">
+                            <circle cx={center} cy={center} r={radius} fill="none" stroke="#1e293b" strokeWidth="16" />
+                            {segments.map((seg, i) => {
+                                const dashArray = `${seg.pct * circumference} ${circumference}`;
+                                const dashOffset = -seg.offset * circumference;
+                                return (
+                                    <circle 
+                                        key={i}
+                                        cx={center} cy={center} r={radius}
+                                        fill="none" stroke={seg.color} strokeWidth="16"
+                                        strokeDasharray={dashArray} strokeDashoffset={dashOffset}
+                                        className="transition-all duration-1000 ease-out animate-fade-in-up"
+                                        style={{ animationDelay: `${i * 100}ms` }}
+                                    />
+                                );
+                            })}
+                        </svg>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total</span>
+                            <span className="text-sm font-black text-white">{formatCurrency(total).split(',')[0]}</span>
+                        </div>
+                    </div>
+                    <div className="flex-1 w-full space-y-2">
+                        {segments.map((seg, i) => (
+                            <div key={i} className="flex items-center justify-between text-xs animate-fade-in-up" style={{ animationDelay: `${i * 100}ms` }}>
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: seg.color }}></div>
+                                    <span className="text-slate-300 font-medium truncate max-w-[120px]" title={seg.label}>{seg.label}</span>
+                                </div>
+                                <span className="text-white font-bold">{(seg.pct * 100).toFixed(1)}%</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        const GaugeChart = ({ score, label }) => {
+            const radius = 65;
+            const size = 180;
+            const cx = size/2, cy = size/2 + 10;
+            const totalLength = Math.PI * radius;
+            const filledLength = (Math.max(0,Math.min(100,score)) / 100) * totalLength;
+            
+            let color = "#ef4444";
+            if (score > 40) color = "#f59e0b";
+            if (score > 80) color = "#10b981";
+
+            return (
+                <div className="relative flex flex-col items-center">
+                    <svg width={size} height={cy} viewBox={`0 0 ${size} ${cy}`}>
+                        <defs>
+                            <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stopColor="#ef4444" />
+                                <stop offset="50%" stopColor="#f59e0b" />
+                                <stop offset="100%" stopColor="#10b981" />
+                            </linearGradient>
+                        </defs>
+                        <path 
+                            d={`M ${cx-radius} ${cy} A ${radius} ${radius} 0 0 1 ${cx+radius} ${cy}`}
+                            fill="none" stroke="#1e293b" strokeWidth="16" strokeLinecap="round"
+                        />
+                        <path 
+                            d={`M ${cx-radius} ${cy} A ${radius} ${radius} 0 0 1 ${cx+radius} ${cy}`}
+                            fill="none" stroke="url(#gaugeGradient)" strokeWidth="16" strokeLinecap="round"
+                            strokeDasharray={`${filledLength} ${totalLength}`}
+                            className="transition-all duration-1000 ease-out"
+                            style={{ animation: 'gaugeNeedle 1.5s ease-out forwards' }}
+                        />
+                    </svg>
+                    <div className="absolute bottom-0 flex flex-col items-center">
+                        <span className="text-3xl font-black text-white" style={{ color: color }}>{score.toFixed(0)}</span>
+                        <span className="text-xs text-slate-400 font-bold uppercase">{label || (score > 80 ? 'Excelente' : score > 40 ? 'Atenção' : 'Crítico')}</span>
+                    </div>
+                </div>
+            );
+        };
+
+        const ScenarioBarChart = ({ scenarios, formatCurrency }) => {
+            const maxValue = Math.max(...scenarios.map(s => s.value));
+            
+            return (
+                <div className="space-y-4">
+                    {scenarios.map((s, i) => {
+                        const widthPct = maxValue > 0 ? (s.value / maxValue) * 100 : 0;
+                        return (
+                            <div key={i} className="group">
+                                <div className="flex items-center justify-between mb-1.5">
+                                    <span className="text-xs font-semibold text-slate-300 flex items-center gap-2">
+                                        <div className="w-2.5 h-2.5 rounded" style={{backgroundColor: s.color}}></div>
+                                        {s.label}
+                                    </span>
+                                    <div className="flex items-center gap-2">
+                                        {s.savings && s.savings !== '0' && s.savings !== '0.0' && (
+                                            <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-full border border-emerald-500/25">— {s.savings}%</span>
+                                        )}
+                                        <span className="text-sm font-bold text-white">{formatCurrency(s.value)}</span>
+                                    </div>
+                                </div>
+                                <div className="w-full bg-[#060e1f] rounded-full h-3.5 shadow-inner overflow-hidden border border-slate-800/50">
+                                    <div 
+                                        className="h-full rounded-full transition-all duration-1000 ease-out relative"
+                                        style={{ width: `${Math.max(2, widthPct)}%`, backgroundColor: s.color }}
+                                    >
+                                        <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/15 to-white/0 rounded-full"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            );
+        };
+
+        const AnnualProjectionChart = ({ monthlyValue, savingsValue, formatCurrency }) => {
+            const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+            const variations = [0.95, 1.02, 1.05, 0.98, 0.93, 0.90, 0.88, 0.92, 0.97, 1.03, 1.08, 1.10];
+            
+            const currentCosts = variations.map(v => monthlyValue * v);
+            const optCosts = variations.map(v => Math.max(0, (monthlyValue - savingsValue)) * v);
+            
+            const maxVal = Math.max(...currentCosts) * 1.1;
+            const height = 180;
+            const width = 600;
+            const dx = width / (months.length - 1);
+            
+            const getY = (val) => height - (maxVal > 0 ? (val / maxVal) * height : 0);
+            
+            const currentPath = currentCosts.map((val, i) => `${i === 0 ? 'M' : 'L'} ${i * dx} ${getY(val)}`).join(' ');
+            const optPath = optCosts.map((val, i) => `${i === 0 ? 'M' : 'L'} ${i * dx} ${getY(val)}`).join(' ');
+
+            const totalCurrent = currentCosts.reduce((a,b)=>a+b,0);
+            const totalOpt = optCosts.reduce((a,b)=>a+b,0);
+
+            return (
+                <div className="flex flex-col">
+                    <div className="relative w-full overflow-x-auto pb-4">
+                        <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-[180px] min-w-[500px]" preserveAspectRatio="none">
+                            <defs>
+                                <linearGradient id="gradCurrent" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stopColor="#ef4444" stopOpacity="0.2"/>
+                                    <stop offset="100%" stopColor="#ef4444" stopOpacity="0"/>
+                                </linearGradient>
+                                <linearGradient id="gradOpt" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stopColor="#10b981" stopOpacity="0.2"/>
+                                    <stop offset="100%" stopColor="#10b981" stopOpacity="0"/>
+                                </linearGradient>
+                            </defs>
+                            
+                            {/* Grid */}
+                            <line x1="0" y1={height/2} x2={width} y2={height/2} stroke="#1e293b" strokeDasharray="4 4" />
+                            
+                            {/* Current Area */}
+                            <path d={`${currentPath} L ${width} ${height} L 0 ${height} Z`} fill="url(#gradCurrent)" className="animate-fade-in-up" />
+                            <path d={currentPath} fill="none" stroke="#ef4444" strokeWidth="2" className="animate-fade-in-up" />
+                            {currentCosts.map((val, i) => <circle key={`c-${i}`} cx={i*dx} cy={getY(val)} r="3" fill="#ef4444" />)}
+                            
+                            {/* Optimized Area */}
+                            <path d={`${optPath} L ${width} ${height} L 0 ${height} Z`} fill="url(#gradOpt)" className="animate-fade-in-up" style={{ animationDelay: '200ms' }} />
+                            <path d={optPath} fill="none" stroke="#10b981" strokeWidth="2" className="animate-fade-in-up" style={{ animationDelay: '200ms' }} />
+                            {optCosts.map((val, i) => <circle key={`o-${i}`} cx={i*dx} cy={getY(val)} r="3" fill="#10b981" />)}
+                        </svg>
+                        <div className="flex justify-between mt-2 text-[10px] text-slate-500 font-bold min-w-[500px]">
+                            {months.map(m => <span key={m}>{m}</span>)}
+                        </div>
+                    </div>
+                    <div className="flex justify-center gap-6 mt-4 border-t border-slate-800/60 pt-4">
+                        <div className="text-center">
+                            <p className="text-[10px] text-slate-400 uppercase font-bold flex items-center justify-center gap-1"><span className="w-2 h-2 bg-red-500 rounded-full"></span> Custo Atual (Anual)</p>
+                            <p className="text-lg font-black text-white">{formatCurrency(totalCurrent)}</p>
+                        </div>
+                        <div className="text-center">
+                            <p className="text-[10px] text-slate-400 uppercase font-bold flex items-center justify-center gap-1"><span className="w-2 h-2 bg-emerald-500 rounded-full"></span> Custo Otimizado (Anual)</p>
+                            <p className="text-lg font-black text-emerald-400">{formatCurrency(totalOpt)}</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const bancoTarifas = {
+                'Enel SP': { demanda: 52.30, demandaPonta: 78.45, consumoFP: 0.72, consumoPonta: 2.10, consumoB: 0.98, icms: 18 },
+                'Cemig': { demanda: 55.10, demandaPonta: 82.65, consumoFP: 0.78, consumoPonta: 2.35, consumoB: 1.05, icms: 18 },
+                'Copel': { demanda: 49.80, demandaPonta: 74.70, consumoFP: 0.69, consumoPonta: 1.95, consumoB: 0.95, icms: 18 },
+                'CPFL Paulista': { demanda: 53.00, demandaPonta: 79.50, consumoFP: 0.75, consumoPonta: 2.20, consumoB: 1.02, icms: 18 },
+                'Neoenergia (Coelba/Celpe/Cosern)': { demanda: 60.50, demandaPonta: 90.75, consumoFP: 0.82, consumoPonta: 2.50, consumoB: 1.10, icms: 20 },
+                'Equatorial (MA/PA/PI/AL/GO/RS)': { demanda: 65.00, demandaPonta: 97.50, consumoFP: 0.88, consumoPonta: 2.70, consumoB: 1.15, icms: 20 },
+                'Light': { demanda: 58.20, demandaPonta: 87.30, consumoFP: 0.85, consumoPonta: 2.60, consumoB: 1.12, icms: 20 },
+                'Energisa (MG/MT/MS/TO/SE/PB/RO/AC)': { demanda: 56.40, demandaPonta: 84.60, consumoFP: 0.80, consumoPonta: 2.40, consumoB: 1.08, icms: 18 },
+                'EDP (SP/ES)': { demanda: 51.50, demandaPonta: 77.25, consumoFP: 0.71, consumoPonta: 2.05, consumoB: 0.97, icms: 18 },
+                'Celesc': { demanda: 48.90, demandaPonta: 73.35, consumoFP: 0.67, consumoPonta: 1.90, consumoB: 0.92, icms: 17 },
+                'Elektro': { demanda: 50.20, demandaPonta: 75.30, consumoFP: 0.70, consumoPonta: 2.00, consumoB: 0.96, icms: 18 },
+                'Enel CE': { demanda: 57.80, demandaPonta: 86.70, consumoFP: 0.79, consumoPonta: 2.38, consumoB: 1.06, icms: 20 },
+                'Enel RJ': { demanda: 59.00, demandaPonta: 88.50, consumoFP: 0.84, consumoPonta: 2.55, consumoB: 1.11, icms: 20 },
+                'Outra': { demanda: 55.00, demandaPonta: 82.50, consumoFP: 0.75, consumoPonta: 2.25, consumoB: 1.00, icms: 18 }
+            };
+
+            const concessionarias = Object.keys(bancoTarifas);
+
+            const [formData, setFormData] = useState({
+                nomeCliente: '',
+                cnpjCliente: '',
+                referenciaFatura: new Date().toISOString().slice(0,7),
+                icmsPercent: 18,
+                pisCofinsPercent: 5.0,
+                tipoBandeira: 'Verde',
+                demandaPontaContratada: 0,
+                demandaPontaMedida: 0,
+                tarifaDemandaPonta: 0,
+                descontoEspecial: 0,
+                concessionaria: 'Enel SP',
+                classeConsumo: 'Comercial',
+                grupoTarifario: 'A',
+                modalidadeTarifaria: 'Verde',
+                demandaContratada: 150,
+                demandaMedida: 110,
+                tarifaDemanda: bancoTarifas['Enel SP'].demanda,
+                consumoAtivo: 25000, 
+                tarifaConsumo: bancoTarifas['Enel SP'].consumoFP,
+                consumoPonta: 0,
+                tarifaConsumoPonta: bancoTarifas['Enel SP'].consumoPonta,
+                valorReativo: 0,
+                taxaIluminacao: 85.00,
+                adicionalBandeiras: 0,
+                impostosEncargos: 0,
+                multasAtraso: 0
+            });
+
+            const [analysis, setAnalysis] = useState(null);
+            const [autoFilled, setAutoFilled] = useState(true);
+            const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+
+            const classesConsumo = [
+                { id: 'Comercial', label: 'Comercial / Serviços', icon: <Building2 className="w-4 h-4" /> },
+                { id: 'Industrial', label: 'Industrial', icon: <Factory className="w-4 h-4" /> },
+                { id: 'Rural', label: 'Rural (Agro)', icon: <Tractor className="w-4 h-4" /> },
+                { id: 'Residencial', label: 'Residencial', icon: <Home className="w-4 h-4" /> },
+                { id: 'Publico', label: 'Poder Público', icon: <Landmark className="w-4 h-4" /> },
+            ];
+
+            const handleRestoreDefaults = (e) => {
+                e.preventDefault();
+                const tarifas = bancoTarifas[formData.concessionaria];
+                if (tarifas) {
+                    setFormData(prev => ({
+                        ...prev,
+                        tarifaDemanda: prev.grupoTarifario === 'A' ? tarifas.demanda : 0,
+                        tarifaDemandaPonta: prev.grupoTarifario === 'A' && prev.modalidadeTarifaria === 'Azul' ? tarifas.demandaPonta || 0 : 0,
+                        tarifaConsumo: prev.grupoTarifario === 'A' ? tarifas.consumoFP : tarifas.consumoB,
+                        tarifaConsumoPonta: prev.grupoTarifario === 'A' ? tarifas.consumoPonta : 0,
+                        icmsPercent: tarifas.icms || 18
+                    }));
+                    setAutoFilled(true);
+                    setTimeout(() => setAutoFilled(false), 3000);
+                }
+            };
+
+            useEffect(() => {
+                const tarifas = bancoTarifas[formData.concessionaria];
+                if (tarifas) {
+                    setFormData(prev => ({
+                        ...prev,
+                        tarifaDemanda: prev.grupoTarifario === 'A' ? tarifas.demanda : 0,
+                        tarifaDemandaPonta: prev.grupoTarifario === 'A' && prev.modalidadeTarifaria === 'Azul' ? tarifas.demandaPonta || 0 : 0,
+                        tarifaConsumo: prev.grupoTarifario === 'A' ? tarifas.consumoFP : tarifas.consumoB,
+                        tarifaConsumoPonta: prev.grupoTarifario === 'A' ? tarifas.consumoPonta : 0,
+                        icmsPercent: tarifas.icms || prev.icmsPercent
+                    }));
+                    setAutoFilled(true);
+                    const timer = setTimeout(() => setAutoFilled(false), 3000);
+                    return () => clearTimeout(timer);
+                }
+            }, [formData.concessionaria, formData.grupoTarifario, formData.modalidadeTarifaria]);
+
+            const calculateAnalysis = () => {
+                const { 
+                    concessionaria, classeConsumo, grupoTarifario, modalidadeTarifaria,
+                    demandaContratada, demandaMedida, tarifaDemanda, 
+                    demandaPontaContratada, demandaPontaMedida, tarifaDemandaPonta,
+                    consumoAtivo, tarifaConsumo, consumoPonta, tarifaConsumoPonta, 
+                    valorReativo, taxaIluminacao, adicionalBandeiras, impostosEncargos, multasAtraso,
+                    tipoBandeira, icmsPercent, pisCofinsPercent, descontoEspecial,
+                    nomeCliente, cnpjCliente, referenciaFatura
+                } = formData;
+
+                const alerts = [];
+                
+                let custoEnergia = 0;
+                let custoEnergiaPonta = 0;
+                let custoDemandaBase = 0;
+                let multaUltrapassagem = 0;
+                let custoOciosidade = 0;
+                let percentualOcioso = 0;
+                let custoReativo = parseFloat(valorReativo) || 0;
+                let custoIluminacao = parseFloat(taxaIluminacao) || 0;
+                let custoAtraso = parseFloat(multasAtraso) || 0;
+                
+                const bandeiraTarifas = { Verde: 0, Amarela: 0.01885, Vermelha1: 0.04463, Vermelha2: 0.07877 };
+                const custoBandeirasCalc = tipoBandeira !== 'Manual' 
+                    ? (parseFloat(consumoAtivo) || 0) * (bandeiraTarifas[tipoBandeira] || 0)
+                    : (parseFloat(adicionalBandeiras) || 0);
+
+                let custoDemandaPonta = 0;
+                let multaUltrapassagemPonta = 0;
+
+                if (classeConsumo === 'Rural') {
+                    alerts.push({
+                        type: 'info',
+                        title: 'Benefício Tarifário Rural (Agro)',
+                        message: `Produtores rurais têm direito a descontos na tarifa (TE/TUSD). Verifique se a ${concessionaria} está aplicando o subsídio (exige recadastramento periódico).`,
+                        icon: <Tractor className="text-blue-400 w-5 h-5" />
+                    });
+                }
+
+                if (grupoTarifario === 'A') {
+                    custoEnergia = consumoAtivo * tarifaConsumo;
+                    custoEnergiaPonta = (parseFloat(consumoPonta) || 0) * (parseFloat(tarifaConsumoPonta) || 0);
+                    custoDemandaBase = demandaContratada * tarifaDemanda;
+
+                    const limiteTolerancia = demandaContratada * 1.05;
+                    if (demandaMedida > limiteTolerancia) {
+                        const tarifaUltrapassagem = tarifaDemanda * 2;
+                        multaUltrapassagem = (demandaMedida - demandaContratada) * tarifaUltrapassagem;
+                    }
+
+                    if (demandaMedida < demandaContratada) {
+                        custoOciosidade = (demandaContratada - demandaMedida) * tarifaDemanda;
+                        percentualOcioso = ((demandaContratada - demandaMedida) / demandaContratada) * 100;
+                    }
+
+                    if (modalidadeTarifaria === 'Azul') {
+                        custoDemandaPonta = (parseFloat(demandaPontaContratada) || 0) * (parseFloat(tarifaDemandaPonta) || 0);
+                        const limitePonta = (parseFloat(demandaPontaContratada) || 0) * 1.05;
+                        if ((parseFloat(demandaPontaMedida) || 0) > limitePonta && (parseFloat(demandaPontaContratada) || 0) > 0) {
+                            multaUltrapassagemPonta = ((parseFloat(demandaPontaMedida) || 0) - (parseFloat(demandaPontaContratada) || 0)) * (parseFloat(tarifaDemandaPonta) || 0) * 2;
+                        }
+                    }
+
+                    if (multaUltrapassagem > 0) {
+                        alerts.push({
+                            type: 'danger',
+                            title: 'Urgente: Multa por Ultrapassagem de Demanda',
+                            message: `A demanda medida (${demandaMedida} kW) excedeu o limite do contrato. A ${concessionaria} cobrou multa severa. Urgente: Estudo para aumento do contrato de demanda.`,
+                            icon: <TrendingUp className="text-red-400 w-5 h-5" />
+                        });
+                    } 
+
+                    if (modalidadeTarifaria === 'Azul' && multaUltrapassagemPonta > 0) {
+                        alerts.push({
+                            type: 'danger',
+                            title: 'Urgente: Multa por Ultrapassagem de Demanda na Ponta',
+                            message: `A demanda ponta medida (${demandaPontaMedida} kW) excedeu o contrato. Multa identificada!`,
+                            icon: <TrendingUp className="text-red-400 w-5 h-5" />
+                        });
+                    }
+                    
+                    if (percentualOcioso > 10) {
+                        alerts.push({
+                            type: 'warning',
+                            title: 'Desperdício: Demanda Ociosa',
+                            message: `O cliente utilizou ${percentualOcioso.toFixed(1)}% a menos do que contratou. Isso gerou um desperdício de R$ ${custoOciosidade.toFixed(2)}. Sugerimos solicitar redução de demanda.`,
+                            icon: <ArrowDownRight className="text-yellow-400 w-5 h-5" />
+                        });
+                    }
+
+                    if (custoEnergiaPonta > custoEnergia * 0.3) {
+                        alerts.push({
+                            type: 'warning',
+                            title: 'Atenção: Alto Consumo no Horário de Ponta',
+                            message: `Consumo elevado no pico (tarifa de R$ ${tarifaConsumoPonta.toFixed(2)}). Avalie deslocar cargas (motores, fornos) para o horário fora de ponta ou investir em geradores para o pico.`,
+                            icon: <TrendingUp className="text-orange-400 w-5 h-5" />
+                        });
+                    }
+
+                    if (custoReativo > 0) {
+                        alerts.push({
+                            type: 'danger',
+                            title: 'Penalidade: Energia Reativa (Baixo FP)',
+                            message: `Multa de R$ ${custoReativo.toFixed(2)} por excesso de energia reativa. Recomendamos urgentemente a instalação/manutenção de banco de capacitores. ROI costuma ser < 8 meses.`,
+                            icon: <Zap className="text-red-400 w-5 h-5" />
+                        });
+                    }
+
+                    if (multaUltrapassagem === 0 && multaUltrapassagemPonta === 0 && percentualOcioso <= 10 && custoReativo === 0) {
+                        alerts.push({
+                            type: 'success',
+                            title: 'Fatura Otimizada (Grupo A)',
+                            message: `Parâmetros de demanda e reativo estão excelentes. Próximo passo para redução: Migração para o Mercado Livre de Energia ou autoprodução.`,
+                            icon: <CheckCircle2 className="text-emerald-400 w-5 h-5" />
+                        });
+                    }
+
+                } else {
+                    custoEnergia = consumoAtivo * tarifaConsumo;
+
+                    if (consumoAtivo > 3000 && classeConsumo !== 'Residencial') {
+                         alerts.push({
+                            type: 'warning',
+                            title: 'Estudo de Migração Tarifária (A4)',
+                            message: `Consumo alto para baixa tensão. Pode ser vantajoso migrar para o Grupo A (Média Tensão) com cabine primária própria, onde a tarifa base da ${concessionaria} é mais barata.`,
+                            icon: <TrendingUp className="text-yellow-400 w-5 h-5" />
+                        });
+                    }
+
+                    if (classeConsumo === 'Residencial' && consumoAtivo < 220) {
+                        alerts.push({
+                            type: 'info',
+                            title: 'Tarifa Social de Energia Elétrica',
+                            message: `Consumo abaixo de 220kWh. Caso o cliente se enquadre nos requisitos de baixa renda, pode solicitar a Tarifa Social.`,
+                            icon: <Target className="text-blue-400 w-5 h-5" />
+                        });
+                    }
+
+                    alerts.push({
+                        type: 'success',
+                        title: 'Viabilidade de Energia Solar',
+                        message: `Excelente perfil para Fotovoltaico. O cliente economizaria aprox. R$ ${(custoEnergia * 0.9).toFixed(2)}/mês. É possível financiar trocando o valor da parcela pela economia gerada.`,
+                        icon: <Zap className="text-emerald-400 w-5 h-5" />
+                    });
+                }
+
+                if (custoAtraso > 0) {
+                    alerts.push({
+                        type: 'danger',
+                        title: 'Gestão Financeira: Juros / Multas',
+                        message: `Foram identificados R$ ${custoAtraso.toFixed(2)} em multas por atraso. Um custo 100% evitável que corrói o fluxo de caixa da empresa mês a mês.`,
+                        icon: <DollarSign className="text-red-400 w-5 h-5" />
+                    });
+                }
+
+                const custoDisponibilidade = grupoTarifario === 'B' ? (() => {
+                    const minKwh = classeConsumo === 'Residencial' ? 30 : 100;
+                    return Math.max(0, minKwh - (parseFloat(consumoAtivo) || 0)) * (parseFloat(tarifaConsumo) || 0);
+                })() : 0;
+
+                const baseCalculo = custoEnergia + custoEnergiaPonta + custoDemandaBase + custoDemandaPonta + custoBandeirasCalc + custoDisponibilidade;
+                const valorICMS = baseCalculo * (parseFloat(icmsPercent) / 100);
+                const valorPISCOFINS = baseCalculo * (parseFloat(pisCofinsPercent) / 100);
+                const totalImpostos = valorICMS + valorPISCOFINS + (parseFloat(impostosEncargos) || 0);
+
+                const valorDescontoEspecial = (custoEnergia + custoEnergiaPonta) * ((parseFloat(descontoEspecial) || 0) / 100);
+
+                let custoTotal = custoEnergia + custoEnergiaPonta + custoDemandaBase + custoDemandaPonta + multaUltrapassagem + multaUltrapassagemPonta + custoReativo + custoBandeirasCalc + totalImpostos + custoAtraso + custoIluminacao + custoDisponibilidade - valorDescontoEspecial;
+                let potencialEconomia = multaUltrapassagem + multaUltrapassagemPonta + custoReativo + custoOciosidade + custoAtraso;
+                
+                let economiaSolar = grupoTarifario === 'A' ? (custoEnergia + custoEnergiaPonta) * 0.85 : custoEnergia * 0.90;
+                let economiaGDCompartilhada = grupoTarifario === 'A' ? (custoEnergia + custoEnergiaPonta) * 0.15 : custoEnergia * 0.15;
+
+                const elegibilidadeACL = grupoTarifario === 'A' && (parseFloat(demandaContratada) || 0) >= 75;
+                const economiaACL = elegibilidadeACL ? (custoEnergia + custoEnergiaPonta) * 0.30 : 0;
+
+                if (elegibilidadeACL) {
+                    alerts.push({
+                        type: 'info',
+                        title: 'Elegibilidade ao Mercado Livre de Energia',
+                        message: `Cliente possui demanda contratada superior a 75kW e pode migrar para o Ambiente de Contratação Livre (ACL). Economia estimada: ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(economiaACL)}.`,
+                        icon: <Target className="text-blue-400 w-5 h-5" />
+                    });
+                }
+
+                const consumoTotal = (parseFloat(consumoAtivo) || 0) + (parseFloat(consumoPonta) || 0);
+                const custoKwhEfetivo = consumoTotal > 0 ? custoTotal / consumoTotal : 0;
+
+                const custoKwhMedioRegional = (bancoTarifas[concessionaria]?.consumoFP || 0.75) * 1.45; 
+                const benchmarkStatus = custoKwhEfetivo > custoKwhMedioRegional * 1.15 ? 'acima' : custoKwhEfetivo < custoKwhMedioRegional * 0.95 ? 'abaixo' : 'na_media';
+
+                if (benchmarkStatus === 'acima') {
+                    alerts.push({
+                        type: 'warning',
+                        title: 'Custo Efetivo acima da média regional',
+                        message: `O valor de R$ ${custoKwhEfetivo.toFixed(2)}/kWh está mais de 15% acima da média praticada na região de atuação da ${concessionaria}.`,
+                        icon: <TrendingUp className="text-yellow-400 w-5 h-5" />
+                    });
+                }
+
+                const totalDesperdicio = multaUltrapassagem + multaUltrapassagemPonta + custoReativo + custoOciosidade + custoAtraso;
+                const efficiencyScore = custoTotal > 0 
+                    ? Math.max(0, Math.min(100, 100 - (totalDesperdicio / custoTotal * 200)))
+                    : 100;
+
+                const fatorCarga = demandaContratada > 0 ? (demandaMedida / demandaContratada) * 100 : 0;
+                const percentualMultas = custoTotal > 0 ? (totalDesperdicio / custoTotal) * 100 : 0;
+
+                const potenciaSolarKwp = consumoTotal > 0 ? consumoTotal / 150 : 0;
+                const investimentoSolar = potenciaSolarKwp * 5500;
+                const paybackMeses = economiaSolar > 0 ? Math.round(investimentoSolar / economiaSolar) : 0;
+                const economia5Anos = economiaSolar * 12 * 5;
+
+                const composicaoFatura = [];
+                if (custoEnergia > 0) composicaoFatura.push({label: grupoTarifario === 'A' ? 'Energia (Fora Ponta)' : 'Energia Ativa', value: custoEnergia, color: '#10b981'});
+                if (custoEnergiaPonta > 0) composicaoFatura.push({label: 'Energia (Ponta)', value: custoEnergiaPonta, color: '#f97316'});
+                if (custoDemandaBase > 0) composicaoFatura.push({label: 'Demanda', value: custoDemandaBase, color: '#3b82f6'});
+                if (custoDemandaPonta > 0) composicaoFatura.push({label: 'Demanda Ponta', value: custoDemandaPonta, color: '#2563eb'});
+                if (valorICMS > 0) composicaoFatura.push({label: 'ICMS', value: valorICMS, color: '#a855f7'});
+                if (valorPISCOFINS > 0) composicaoFatura.push({label: 'PIS/COFINS', value: valorPISCOFINS, color: '#c084fc'});
+                if (impostosEncargos > 0) composicaoFatura.push({label: 'Outros Encargos', value: parseFloat(impostosEncargos), color: '#d8b4fe'});
+                if (custoBandeirasCalc > 0) composicaoFatura.push({label: 'Bandeira Tarifária', value: custoBandeirasCalc, color: '#eab308'});
+                if (multaUltrapassagem > 0) composicaoFatura.push({label: 'Multa Ultrapassagem', value: multaUltrapassagem, color: '#ef4444'});
+                if (multaUltrapassagemPonta > 0) composicaoFatura.push({label: 'Multa Ult. Ponta', value: multaUltrapassagemPonta, color: '#dc2626'});
+                if (custoReativo > 0) composicaoFatura.push({label: 'Reativo', value: custoReativo, color: '#f43f5e'});
+                if (custoAtraso > 0) composicaoFatura.push({label: 'Juros/Multa Atraso', value: custoAtraso, color: '#be123c'});
+                if (custoIluminacao > 0 && grupoTarifario === 'B') composicaoFatura.push({label: 'Iluminação (COSIP)', value: custoIluminacao, color: '#ca8a04'});
+                if (custoDisponibilidade > 0) composicaoFatura.push({label: 'Custo de Disp.', value: custoDisponibilidade, color: '#0ea5e9'});
+
+                setAnalysis({
+                    nomeCliente, cnpjCliente, referenciaFatura,
+                    concessionaria, classeConsumo, grupoTarifario, modalidadeTarifaria,
+                    demandaContratada, demandaMedida, demandaPontaContratada, demandaPontaMedida,
+                    custoTotal, custoEnergia, custoEnergiaPonta, custoDemandaBase, custoDemandaPonta,
+                    multaUltrapassagem, multaUltrapassagemPonta, custoReativo, custoIluminacao, custoBandeirasCalc, 
+                    totalImpostos, valorICMS, valorPISCOFINS, custoAtraso,
+                    custoOciosidade, percentualOcioso, potencialEconomia, economiaSolar, economiaGDCompartilhada, alerts,
+                    efficiencyScore, custoKwhEfetivo, fatorCarga, percentualMultas,
+                    potenciaSolarKwp, investimentoSolar, paybackMeses, economia5Anos,
+                    composicaoFatura, consumoTotal, elegibilidadeACL, economiaACL, custoDisponibilidade, valorDescontoEspecial, custoKwhMedioRegional, benchmarkStatus, tipoBandeira
+                });
+            };
+
+            useEffect(() => {
+                calculateAnalysis();
+            }, [formData]);
+
+            const handleInputChange = (e) => {
+                const { name, value, type } = e.target;
+                setFormData(prev => ({
+                    ...prev,
+                    [name]: type === 'radio' || type === 'select-one' || (typeof value === 'string' && isNaN(value)) || type === 'month' || type === 'text'
+                        ? value 
+                        : (value === '' ? '' : parseFloat(value))
+                }));
+            };
+
+            const formatCurrency = (value) => {
+                return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value || 0);
+            };
+
+            const handleGeneratePDF = () => {
+                if (!analysis) return;
+                setIsGeneratingPDF(true);
+                
+                const element = document.getElementById('proposta-template');
+                if (!element) {
+                    setIsGeneratingPDF(false);
+                    return;
+                }
+
+                const opt = {
+                    margin: 0,
+                    filename: `Proposta_Comercial_ENGER_${(formData.nomeCliente || analysis.concessionaria || 'cliente').replace(/\s+/g, '_')}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true, letterRendering: true, logging: false },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+                };
+
+                html2pdf().set(opt).from(element).save().then(() => {
+                    setTimeout(() => setIsGeneratingPDF(false), 500);
+                }).catch(() => {
+                    setIsGeneratingPDF(false);
+                });
+            };
+
+            
+            return (
+                <div className="min-h-screen bg-[#060e1f] text-slate-200 p-4 md:p-6 lg:p-8 font-sans selection:bg-emerald-500/30">
+                    
+                    <header className="mb-6 flex items-center justify-between border-b pb-4 border-slate-800/80">
+                        <div className="flex items-center gap-3">
+                            <div className="bg-emerald-500 p-2.5 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.25)] relative overflow-hidden">
+                                <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                                <Zap className="text-[#060e1f] w-6 h-6 relative z-10" />
+                            </div>
+                            <div>
+                                <h1 className="text-2xl font-extrabold text-white tracking-tight">ENGER <span className="text-emerald-500">Analytics</span> <span className="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full ml-1 align-top">v4.0</span></h1>
+                                <p className="text-xs md:text-sm text-slate-400 font-medium">Motor de Inteligência Tarifária e Redução de Custos</p>
+                            </div>
+                        </div>
+                        <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-[#0d172a] rounded-lg border border-slate-800">
+                            <FileText className="w-4 h-4 text-emerald-500" />
+                            <span className="text-xs font-semibold text-slate-300">Emissão de Laudo Ativa</span>
+                        </div>
+                    </header>
+
+                    {analysis && (
+                        <div className="mb-6 bg-gradient-to-r from-[#0b1325] via-[#0d1a30] to-[#0b1325] p-6 rounded-2xl border border-slate-800/80 shadow-2xl">
+                            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                                <div className="flex items-center gap-4">
+                                    <div className={`p-3 rounded-xl ${analysis.efficiencyScore >= 80 ? 'bg-emerald-500/20' : analysis.efficiencyScore >= 50 ? 'bg-yellow-500/20' : 'bg-red-500/20'}`}>
+                                        {analysis.efficiencyScore >= 80 ? <CheckCircle2 className="w-8 h-8 text-emerald-400" /> : analysis.efficiencyScore >= 50 ? <AlertCircle className="w-8 h-8 text-yellow-400" /> : <AlertCircle className="w-8 h-8 text-red-400" />}
+                                    </div>
+                                    <div>
+                                        <h2 className="text-lg font-black text-white">Diagnóstico: {analysis.efficiencyScore >= 80 ? 'Fatura otimizada — foco em geração própria' : analysis.efficiencyScore >= 50 ? 'Oportunidades de economia identificadas' : 'Fatura com desperdícios críticos — ação urgente'}</h2>
+                                        <p className="text-sm text-slate-400 mt-1">
+                                            {analysis.nomeCliente || analysis.classeConsumo} — {analysis.concessionaria} — Grupo {analysis.grupoTarifario} {analysis.grupoTarifario === 'A' ? `(${analysis.modalidadeTarifaria})` : ''}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <div className="text-right">
+                                        <p className="text-[10px] text-slate-500 uppercase font-bold">Potencial de Economia</p>
+                                        <p className="text-2xl font-black text-emerald-400">{formatCurrency(Math.max(analysis.potencialEconomia, analysis.economiaSolar, analysis.economiaACL || 0))}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+                        
+                        <div className="lg:col-span-4 space-y-6">
+                            <div className="bg-[#0b1325] p-5 md:p-6 rounded-2xl shadow-2xl border border-slate-800/80">
+                                <div className="flex items-center gap-2 mb-5 pb-3 border-b border-slate-800/60">
+                                    <Settings className="w-5 h-5 text-emerald-500" />
+                                    <h2 className="text-lg font-bold text-white">Parâmetros da Fatura</h2>
+                                </div>
+                                
+                                <form className="space-y-5">
+                                    
+                                    <div className="space-y-4">
+                                        <h3 className="text-xs font-bold uppercase text-slate-400 tracking-wider">Identificação do Cliente</h3>
+                                        
+                                        <div className="grid grid-cols-1 gap-4">
+                                            <div>
+                                                <label className="block text-[11px] font-medium text-slate-300 mb-1">Nome do Cliente</label>
+                                                <input type="text" name="nomeCliente" value={formData.nomeCliente} onChange={handleInputChange} placeholder="Ex: Empresa Silva Ltda" className="w-full px-3 py-2.5 bg-[#060e1f] border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[11px] font-medium text-slate-300 mb-1">CNPJ / CPF</label>
+                                                <input type="text" name="cnpjCliente" value={formData.cnpjCliente} onChange={handleInputChange} placeholder="00.000.000/0000-00" className="w-full px-3 py-2.5 bg-[#060e1f] border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[11px] font-medium text-slate-300 mb-1">Referência da Fatura</label>
+                                                <input type="month" name="referenciaFatura" value={formData.referenciaFatura} onChange={handleInputChange} className="w-1/2 px-3 py-2.5 bg-[#060e1f] border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm" />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-xs font-medium text-slate-400 mb-1.5 flex items-center justify-between">
+                                                    <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> Concessionária</span>
+                                                    {autoFilled && <span className="text-[9px] text-emerald-400 flex items-center gap-1 bg-emerald-900/30 px-1.5 py-0.5 rounded"><Wand2 className="w-2.5 h-2.5"/> Tarifas Atualizadas</span>}
+                                                </label>
+                                                <select 
+                                                    name="concessionaria" 
+                                                    value={formData.concessionaria} 
+                                                    onChange={handleInputChange} 
+                                                    className="w-full px-3 py-2.5 bg-[#060e1f] border border-slate-700/80 text-white rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all text-sm appearance-none cursor-pointer hover:border-slate-600"
+                                                >
+                                                    {concessionarias.map(c => <option key={c} value={c}>{c}</option>)}
+                                                </select>
+                                            </div>
+
+                                            <div className="bg-[#0f1d35] p-3 rounded-lg border border-slate-700/50 flex flex-col justify-between items-start">
+                                                <span className="text-[10px] text-slate-400 mb-2">Tarifas ANEEL — Atualização: Agosto/2025</span>
+                                                <button onClick={handleRestoreDefaults} className="flex items-center gap-1.5 text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded transition-colors">
+                                                    <RefreshCw className="w-3 h-3" /> Restaurar Tarifas Padrão
+                                                </button>
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-xs font-medium text-slate-400 mb-1.5">Classe / Subgrupo de Consumo</label>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    {classesConsumo.map(classe => (
+                                                        <label key={classe.id} className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer border transition-all ${formData.classeConsumo === classe.id ? 'bg-[#0f1d35] border-yellow-500/50 text-yellow-400 shadow-[0_0_10px_rgba(234,179,8,0.05)]' : 'bg-[#060e1f] border-slate-800 text-slate-400 hover:border-slate-700'}`}>
+                                                            <input type="radio" name="classeConsumo" value={classe.id} checked={formData.classeConsumo === classe.id} onChange={handleInputChange} className="hidden" />
+                                                            {classe.icon}
+                                                            <span className="text-[11px] font-semibold">{classe.id}</span>
+                                                        </label>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            
+                                            {(formData.classeConsumo === 'Rural' || formData.classeConsumo === 'Publico') && (
+                                                <div className="mt-2">
+                                                    <label className="block text-[11px] font-medium text-slate-300 mb-1">Desconto TUSD (%)</label>
+                                                    <input type="number" name="descontoEspecial" value={formData.descontoEspecial} onChange={handleInputChange} className="w-full px-3 py-2.5 bg-[#060e1f] border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm" />
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-3 pt-4 border-t border-slate-800/60">
+                                        <h3 className="text-xs font-bold uppercase text-slate-400 tracking-wider">Enquadramento</h3>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <label className={`flex flex-col items-center justify-center p-3 rounded-xl cursor-pointer border transition-all ${formData.grupoTarifario === 'A' ? 'bg-[#0f1d35] border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.1)]' : 'bg-[#060e1f] border-slate-800 hover:border-slate-700'}`}>
+                                                <input type="radio" name="grupoTarifario" value="A" checked={formData.grupoTarifario === 'A'} onChange={handleInputChange} className="hidden" />
+                                                <span className="text-sm font-bold text-white">Grupo A</span>
+                                                <span className="text-[10px] text-slate-400 mt-1 uppercase tracking-wider">Média/Alta Tensão</span>
+                                            </label>
+                                            <label className={`flex flex-col items-center justify-center p-3 rounded-xl cursor-pointer border transition-all ${formData.grupoTarifario === 'B' ? 'bg-[#0f1d35] border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.1)]' : 'bg-[#060e1f] border-slate-800 hover:border-slate-700'}`}>
+                                                <input type="radio" name="grupoTarifario" value="B" checked={formData.grupoTarifario === 'B'} onChange={handleInputChange} className="hidden" />
+                                                <span className="text-sm font-bold text-white">Grupo B</span>
+                                                <span className="text-[10px] text-slate-400 mt-1 uppercase tracking-wider">Baixa Tensão</span>
+                                            </label>
+                                        </div>
+
+                                        {formData.grupoTarifario === 'A' && (
+                                            <div className="mt-3">
+                                                <label className="block text-[11px] font-medium text-slate-400 mb-1.5">Modalidade Tarifária (Grupo A)</label>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    <label className={`flex items-center justify-center gap-2 p-2 rounded-lg cursor-pointer border transition-all ${formData.modalidadeTarifaria === 'Verde' ? 'bg-emerald-900/20 border-emerald-500/50 text-emerald-400' : 'bg-[#060e1f] border-slate-800 text-slate-400 hover:border-slate-700'}`}>
+                                                        <input type="radio" name="modalidadeTarifaria" value="Verde" checked={formData.modalidadeTarifaria === 'Verde'} onChange={handleInputChange} className="hidden" />
+                                                        <span className="text-xs font-semibold">Tarifa Verde</span>
+                                                    </label>
+                                                    <label className={`flex items-center justify-center gap-2 p-2 rounded-lg cursor-pointer border transition-all ${formData.modalidadeTarifaria === 'Azul' ? 'bg-blue-900/20 border-blue-500/50 text-blue-400' : 'bg-[#060e1f] border-slate-800 text-slate-400 hover:border-slate-700'}`}>
+                                                        <input type="radio" name="modalidadeTarifaria" value="Azul" checked={formData.modalidadeTarifaria === 'Azul'} onChange={handleInputChange} className="hidden" />
+                                                        <span className="text-xs font-semibold">Tarifa Azul</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {formData.grupoTarifario === 'A' && (
+                                        <div className="space-y-4 pt-4 border-t border-slate-800/60">
+                                            <h3 className="text-xs font-bold uppercase text-blue-400 tracking-wider flex items-center gap-1.5"><Activity className="w-3.5 h-3.5"/> Demanda (kW)</h3>
+                                            
+                                            <div className="grid grid-cols-2 gap-3">
+                                                <div>
+                                                    <label className="block text-[11px] font-medium text-slate-300 mb-1">Contratada</label>
+                                                    <input type="number" name="demandaContratada" value={formData.demandaContratada} onChange={handleInputChange} className="w-full px-3 py-2.5 bg-[#060e1f] border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm" />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-[11px] font-medium text-slate-300 mb-1">Medida (Faturada)</label>
+                                                    <input type="number" name="demandaMedida" value={formData.demandaMedida} onChange={handleInputChange} className="w-full px-3 py-2.5 bg-[#060e1f] border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm" />
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label className="block text-[11px] font-medium text-slate-300 mb-1 flex items-center justify-between">
+                                                    Tarifa Demanda (R$/kW)
+                                                    <Wand2 className={`w-3 h-3 ${autoFilled ? 'text-emerald-500 animate-pulse' : 'text-slate-600'}`}/>
+                                                </label>
+                                                <div className="relative">
+                                                    <span className="absolute left-3 top-2 text-xs text-slate-500">R$</span>
+                                                    <input type="number" name="tarifaDemanda" value={formData.tarifaDemanda} onChange={handleInputChange} step="0.01" className="w-full pl-8 pr-3 py-2.5 bg-[#060e1f] border border-slate-700 text-white rounded-lg focus:ring-1 focus:ring-blue-500 outline-none text-sm" />
+                                                </div>
+                                            </div>
+
+                                            {formData.modalidadeTarifaria === 'Azul' && (
+                                                <div className="mt-4 p-3 bg-blue-950/20 border border-blue-900/30 rounded-lg space-y-3">
+                                                    <div className="grid grid-cols-2 gap-3">
+                                                        <div>
+                                                            <label className="block text-[11px] font-medium text-blue-400 mb-1">Demanda Ponta Contratada</label>
+                                                            <input type="number" name="demandaPontaContratada" value={formData.demandaPontaContratada} onChange={handleInputChange} className="w-full px-3 py-2 bg-[#060e1f] border border-blue-900/50 text-white rounded-md focus:ring-1 focus:ring-blue-500 outline-none text-sm" />
+                                                        </div>
+                                                        <div>
+                                                            <label className="block text-[11px] font-medium text-blue-400 mb-1">Demanda Ponta Medida</label>
+                                                            <input type="number" name="demandaPontaMedida" value={formData.demandaPontaMedida} onChange={handleInputChange} className="w-full px-3 py-2 bg-[#060e1f] border border-blue-900/50 text-white rounded-md focus:ring-1 focus:ring-blue-500 outline-none text-sm" />
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-[11px] font-medium text-blue-400 mb-1">Tarifa Demanda Ponta</label>
+                                                        <div className="relative">
+                                                            <span className="absolute left-3 top-2 text-xs text-slate-500">R$</span>
+                                                            <input type="number" name="tarifaDemandaPonta" value={formData.tarifaDemandaPonta} onChange={handleInputChange} step="0.01" className="w-full pl-8 pr-3 py-2 bg-[#060e1f] border border-blue-900/50 text-white rounded-md focus:ring-1 focus:ring-blue-500 outline-none text-sm" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    <div className="space-y-4 pt-4 border-t border-slate-800/60">
+                                        <h3 className="text-xs font-bold uppercase text-emerald-500 tracking-wider flex items-center gap-1.5"><Zap className="w-3.5 h-3.5"/> Consumo (kWh)</h3>
+                                        
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <div>
+                                                <label className="block text-[11px] font-medium text-slate-300 mb-1">
+                                                    {formData.grupoTarifario === 'A' ? 'Consumo (Fora Ponta)' : 'Consumo Total'}
+                                                </label>
+                                                <div className="relative">
+                                                    <input type="number" name="consumoAtivo" value={formData.consumoAtivo} onChange={handleInputChange} className="w-full pl-3 pr-8 py-2.5 bg-[#060e1f] border border-slate-700 text-white rounded-lg focus:ring-1 focus:ring-emerald-500 outline-none text-sm" />
+                                                    <span className="absolute right-3 top-2.5 text-[10px] text-slate-500">kWh</span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label className="block text-[11px] font-medium text-slate-300 mb-1 flex items-center justify-between">
+                                                    Tarifa (R$/kWh)
+                                                    <Wand2 className={`w-3 h-3 ${autoFilled ? 'text-emerald-500 animate-pulse' : 'text-slate-600'}`}/>
+                                                </label>
+                                                <div className="relative">
+                                                    <span className="absolute left-3 top-2.5 text-xs text-slate-500">R$</span>
+                                                    <input type="number" name="tarifaConsumo" value={formData.tarifaConsumo} onChange={handleInputChange} step="0.01" className="w-full pl-8 pr-3 py-2.5 bg-[#060e1f] border border-slate-700 text-white rounded-lg focus:ring-1 focus:ring-emerald-500 outline-none text-sm" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {formData.grupoTarifario === 'A' && (
+                                            <div className="p-3 bg-orange-950/20 border border-orange-900/30 rounded-lg space-y-3">
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                    <div>
+                                                        <label className="block text-[11px] font-medium text-orange-400/90 mb-1">Consumo (Ponta)</label>
+                                                        <div className="relative">
+                                                            <input type="number" name="consumoPonta" value={formData.consumoPonta} onChange={handleInputChange} className="w-full pl-3 pr-8 py-2 bg-[#060e1f] border border-orange-900/50 text-white rounded-md focus:ring-1 focus:ring-orange-500 outline-none text-sm" />
+                                                            <span className="absolute right-3 top-2 text-[10px] text-slate-500">kWh</span>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-[11px] font-medium text-orange-400/90 mb-1">Tarifa (Ponta)</label>
+                                                        <div className="relative">
+                                                            <span className="absolute left-3 top-2 text-xs text-slate-500">R$</span>
+                                                            <input type="number" name="tarifaConsumoPonta" value={formData.tarifaConsumoPonta} onChange={handleInputChange} step="0.01" className="w-full pl-8 pr-3 py-2 bg-[#060e1f] border border-orange-900/50 text-white rounded-md focus:ring-1 focus:ring-orange-500 outline-none text-sm" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                        
+                                        {formData.grupoTarifario === 'B' && (
+                                            <div>
+                                                <label className="block text-[11px] font-medium text-slate-300 mb-1">Taxa de Iluminação (COSIP)</label>
+                                                <div className="relative">
+                                                    <span className="absolute left-3 top-2.5 text-xs text-slate-500">R$</span>
+                                                    <input type="number" name="taxaIluminacao" value={formData.taxaIluminacao} onChange={handleInputChange} className="w-full pl-8 pr-3 py-2.5 bg-[#060e1f] border border-slate-700 text-white rounded-lg focus:ring-1 focus:ring-yellow-500 outline-none text-sm" />
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="space-y-4 pt-4 border-t border-slate-800/60">
+                                        <h3 className="text-xs font-bold uppercase text-purple-400 tracking-wider flex items-center gap-1.5"><DollarSign className="w-3.5 h-3.5"/> Impostos e Tributos</h3>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <div>
+                                                <label className="block text-[11px] font-medium text-purple-300 mb-1 flex items-center justify-between">
+                                                    ICMS (%)
+                                                    <Wand2 className={`w-3 h-3 ${autoFilled ? 'text-emerald-500 animate-pulse' : 'text-slate-600'}`}/>
+                                                </label>
+                                                <div className="relative">
+                                                    <input type="number" name="icmsPercent" value={formData.icmsPercent} onChange={handleInputChange} step="0.01" className="w-full pl-3 pr-8 py-2 bg-[#060e1f] border border-purple-900/50 text-white rounded-md focus:ring-1 focus:ring-purple-500 outline-none text-sm" />
+                                                    <span className="absolute right-3 top-2 text-[10px] text-slate-500">%</span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label className="block text-[11px] font-medium text-purple-300 mb-1">PIS/COFINS (%)</label>
+                                                <div className="relative">
+                                                    <input type="number" name="pisCofinsPercent" value={formData.pisCofinsPercent} onChange={handleInputChange} step="0.01" className="w-full pl-3 pr-8 py-2 bg-[#060e1f] border border-purple-900/50 text-white rounded-md focus:ring-1 focus:ring-purple-500 outline-none text-sm" />
+                                                    <span className="absolute right-3 top-2 text-[10px] text-slate-500">%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-4 pt-4 border-t border-slate-800/60">
+                                        <h3 className="text-xs font-bold uppercase text-yellow-400 tracking-wider flex items-center gap-1.5"><Sun className="w-3.5 h-3.5"/> Bandeira Tarifária</h3>
+                                        
+                                        <div>
+                                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-3">
+                                                {['Verde', 'Amarela', 'Vermelha1', 'Vermelha2'].map(bandeira => (
+                                                    <label key={bandeira} className={`flex flex-col items-center justify-center p-2 rounded-lg cursor-pointer border transition-all ${formData.tipoBandeira === bandeira ? 'bg-slate-800 border-yellow-500 text-white' : 'bg-[#060e1f] border-slate-800 text-slate-400 hover:border-slate-700'}`}>
+                                                        <input type="radio" name="tipoBandeira" value={bandeira} checked={formData.tipoBandeira === bandeira} onChange={handleInputChange} className="hidden" />
+                                                        <span className="text-[10px] font-bold">{bandeira.replace('1', ' 1').replace('2', ' 2')}</span>
+                                                    </label>
+                                                ))}
+                                                <label className={`flex flex-col items-center justify-center p-2 rounded-lg cursor-pointer border transition-all col-span-2 lg:col-span-4 ${formData.tipoBandeira === 'Manual' ? 'bg-slate-800 border-yellow-500 text-white' : 'bg-[#060e1f] border-slate-800 text-slate-400 hover:border-slate-700'}`}>
+                                                    <input type="radio" name="tipoBandeira" value="Manual" checked={formData.tipoBandeira === 'Manual'} onChange={handleInputChange} className="hidden" />
+                                                    <span className="text-[10px] font-bold">Informar Valor Manual</span>
+                                                </label>
+                                            </div>
+                                            
+                                            {formData.tipoBandeira === 'Manual' && (
+                                                <div>
+                                                    <label className="block text-[11px] font-medium text-slate-300 mb-1">Valor Bandeira Tarifária (R$)</label>
+                                                    <div className="relative">
+                                                        <span className="absolute left-3 top-2 text-xs text-slate-500">R$</span>
+                                                        <input type="number" name="adicionalBandeiras" value={formData.adicionalBandeiras} onChange={handleInputChange} className="w-full pl-8 pr-3 py-2 bg-[#060e1f] border border-slate-700 text-white rounded-md focus:ring-1 focus:ring-yellow-500 outline-none text-sm" />
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-[11px] font-medium text-slate-300 mb-1 mt-3">Outros Encargos Financeiros (R$)</label>
+                                            <div className="relative">
+                                                <span className="absolute left-3 top-2 text-xs text-slate-500">R$</span>
+                                                <input type="number" name="impostosEncargos" value={formData.impostosEncargos} onChange={handleInputChange} className="w-full pl-8 pr-3 py-2 bg-[#060e1f] border border-slate-700 text-white rounded-md focus:ring-1 focus:ring-purple-500 outline-none text-sm" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-4 pt-4 border-t border-slate-800/60">
+                                        <h3 className="text-xs font-bold uppercase text-rose-500 tracking-wider flex items-center gap-1.5"><AlertCircle className="w-3.5 h-3.5"/> Multas e Penalidades</h3>
+                                        
+                                        {formData.grupoTarifario === 'A' && (
+                                            <div>
+                                                <label className="block text-[11px] font-medium text-slate-300 mb-1">Energia Reativa (Multa Fator de Potência)</label>
+                                                <div className="relative">
+                                                    <span className="absolute left-3 top-2.5 text-xs text-rose-500/70">R$</span>
+                                                    <input type="number" name="valorReativo" value={formData.valorReativo} onChange={handleInputChange} className="w-full pl-8 pr-3 py-2.5 bg-[#140b10] border border-rose-900/50 text-white rounded-lg focus:ring-2 focus:ring-rose-500 outline-none text-sm" />
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <div>
+                                            <label className="block text-[11px] font-medium text-slate-300 mb-1">Juros / Multa por Atraso</label>
+                                            <div className="relative">
+                                                <span className="absolute left-3 top-2.5 text-xs text-rose-500/70">R$</span>
+                                                <input type="number" name="multasAtraso" value={formData.multasAtraso} onChange={handleInputChange} className="w-full pl-8 pr-3 py-2.5 bg-[#140b10] border border-rose-900/50 text-white rounded-lg focus:ring-2 focus:ring-rose-500 outline-none text-sm" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+
+                        <div className="lg:col-span-8 space-y-6">
+                            {analysis && (
+                                <>
+                                    <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
+                                        <div className="col-span-2 md:col-span-3 xl:col-span-2 bg-[#0b1325] p-5 rounded-2xl shadow-xl border border-slate-800/80 flex flex-col justify-center relative overflow-hidden group hover:border-slate-600 transition-colors">
+                                            <div className="absolute -right-4 -top-4 w-24 h-24 bg-slate-800/20 rounded-full blur-2xl group-hover:bg-slate-700/30 transition-all"></div>
+                                            <h3 className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-2 flex items-center gap-1.5"><DollarSign className="w-3.5 h-3.5"/> Fatura Estimada</h3>
+                                            <p className="text-xl lg:text-2xl font-black text-white tracking-tight">{formatCurrency(analysis.custoTotal)}</p>
+                                            <p className="text-[10px] text-slate-500 mt-2 font-medium leading-tight">Soma exata de todos os componentes e encargos.</p>
+                                        </div>
+                                        
+                                        <div className="col-span-1 md:col-span-1 xl:col-span-1 p-4 rounded-xl shadow-xl border flex flex-col justify-center relative overflow-hidden group transition-colors bg-gradient-to-br from-[#1a140f] to-[#0b1325] border-yellow-900/50 hover:border-yellow-700/60">
+                                            <div className="absolute -right-2 -bottom-2 p-2 opacity-[0.07] transform group-hover:scale-110 transition-transform text-yellow-500">
+                                                <TrendingDown className="w-16 h-16" />
+                                            </div>
+                                            <h3 className="text-[9px] uppercase tracking-wider font-bold mb-1 text-yellow-400">
+                                                Desperdício
+                                            </h3>
+                                            <p className="text-lg font-black text-white tracking-tight">{formatCurrency(analysis.potencialEconomia)}</p>
+                                        </div>
+
+                                        <div className="col-span-1 md:col-span-1 xl:col-span-1 p-4 rounded-xl shadow-xl border flex flex-col justify-center relative overflow-hidden group transition-colors bg-gradient-to-br from-[#0f1a14] to-[#0b1325] border-emerald-900/50 hover:border-emerald-700/60">
+                                            <div className="absolute -right-2 -bottom-2 p-2 opacity-[0.07] transform group-hover:scale-110 transition-transform text-emerald-500">
+                                                <Zap className="w-16 h-16" />
+                                            </div>
+                                            <h3 className="text-[9px] uppercase tracking-wider font-bold mb-1 text-emerald-400">
+                                                Usina Própria
+                                            </h3>
+                                            <p className="text-lg font-black text-white tracking-tight">{formatCurrency(analysis.economiaSolar)}</p>
+                                        </div>
+
+                                        <div className="col-span-2 md:col-span-1 xl:col-span-1 p-4 rounded-xl shadow-xl border flex flex-col justify-center relative overflow-hidden group transition-colors bg-gradient-to-br from-[#0f172a] to-[#0b1325] border-cyan-900/50 hover:border-cyan-700/60">
+                                            <div className="absolute -right-2 -bottom-2 p-2 opacity-[0.07] transform group-hover:scale-110 transition-transform text-cyan-500">
+                                                <Wand2 className="w-16 h-16" />
+                                            </div>
+                                            <h3 className="text-[9px] uppercase tracking-wider font-bold mb-1 text-cyan-400">
+                                                GD Comp.
+                                            </h3>
+                                            <p className="text-lg font-black text-white tracking-tight">{formatCurrency(analysis.economiaGDCompartilhada)}</p>
+                                        </div>
+                                        
+                                        {analysis.elegibilidadeACL && (
+                                            <div className="col-span-2 md:col-span-2 xl:col-span-1 bg-[#0b1325] p-4 rounded-xl border border-slate-800/80 hover:border-violet-800/50 transition-colors">
+                                                <span className="text-[9px] uppercase tracking-wider text-slate-500 font-bold">Mercado Livre (ACL)</span>
+                                                <p className="text-lg font-black text-violet-400 mt-1">{formatCurrency(analysis.economiaACL)}</p>
+                                                <p className="text-[9px] text-slate-500 mt-1">Economia mensal</p>
+                                            </div>
+                                        )}
+                                        
+                                        <div className="col-span-2 md:col-span-2 xl:col-span-1 bg-[#0b1325] p-4 rounded-xl border border-slate-800/80 hover:border-purple-800/50 transition-colors">
+                                            <span className="text-[9px] uppercase tracking-wider text-slate-500 font-bold">Impostos (ICMS+PIS)</span>
+                                            <p className="text-lg font-black text-purple-400 mt-1">{formatCurrency(analysis.totalImpostos)}</p>
+                                            <p className="text-[9px] text-slate-500 mt-1">ICMS {formData.icmsPercent}% + PIS {formData.pisCofinsPercent}%</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Composição da Fatura + Score de Eficiência */}
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                        <div className="bg-[#0b1325] p-6 rounded-2xl shadow-xl border border-slate-800/80">
+                                            <div className="flex items-center gap-2 mb-5">
+                                                <PieChartIcon className="w-5 h-5 text-emerald-500" />
+                                                <h2 className="text-sm font-bold text-white uppercase tracking-wider">Composição da Fatura</h2>
+                                            </div>
+                                            <DonutChart data={analysis.composicaoFatura} total={analysis.custoTotal} formatCurrency={formatCurrency} />
+                                        </div>
+                                        <div className="bg-[#0b1325] p-6 rounded-2xl shadow-xl border border-slate-800/80">
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <Target className="w-5 h-5 text-emerald-500" />
+                                                <h2 className="text-sm font-bold text-white uppercase tracking-wider">Score de Eficiência</h2>
+                                            </div>
+                                            <GaugeChart score={analysis.efficiencyScore} />
+                                            <p className="text-[10px] text-slate-500 text-center mt-2 font-medium">Baseado na relação multas e desperdícios vs valor total da fatura</p>
+                                        </div>
+                                    </div>
+
+                                    {analysis.grupoTarifario === 'A' && (
+                                        <div className="bg-[#0b1325] p-6 rounded-2xl shadow-xl border border-slate-800/80">
+                                            <div className="flex items-center justify-between mb-4">
+                                                <div className="flex items-center gap-2">
+                                                    <Activity className="w-5 h-5 text-blue-400" />
+                                                    <h2 className="text-sm font-bold text-white">Análise do Contrato de Demanda (kW)</h2>
+                                                </div>
+                                            </div>
+
+                                            <div className="relative pt-1">
+                                                <div className="flex mb-2 items-center justify-between">
+                                                    <div>
+                                                        <span className={`text-xs font-bold inline-block px-2 py-1 rounded ${
+                                                            analysis.demandaMedida > analysis.demandaContratada * 1.05 ? 'bg-red-500/20 text-red-400' : 
+                                                            analysis.demandaMedida < analysis.demandaContratada * 0.9 ? 'bg-yellow-500/20 text-yellow-400' : 'bg-blue-500/20 text-blue-400'
+                                                        }`}>
+                                                            Utilizado: {analysis.demandaMedida} kW
+                                                        </span>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <span className="text-[11px] font-semibold inline-block text-slate-400 border border-slate-700 px-2 py-1 rounded">Contratado: {analysis.demandaContratada} kW</span>
+                                                    </div>
+                                                </div>
+                                                <div className="overflow-hidden h-3 mb-4 text-xs flex rounded bg-[#060e1f] border border-slate-700">
+                                                    <div style={{ width: `${Math.min(100, (analysis.demandaMedida / Math.max(analysis.demandaContratada, 1)) * 100)}%` }} className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center transition-all duration-1000 ${
+                                                        analysis.demandaMedida > analysis.demandaContratada * 1.05 ? 'bg-red-500' : 
+                                                        analysis.demandaMedida < analysis.demandaContratada * 0.9 ? 'bg-yellow-500' : 'bg-blue-500'
+                                                    }`}></div>
+                                                </div>
+                                            </div>
+                                            
+                                            {analysis.modalidadeTarifaria === 'Azul' && analysis.demandaPontaContratada > 0 && (
+                                                <div className="relative pt-1 mt-4">
+                                                    <div className="flex mb-2 items-center justify-between">
+                                                        <div>
+                                                            <span className={`text-xs font-bold inline-block px-2 py-1 rounded ${
+                                                                analysis.demandaPontaMedida > analysis.demandaPontaContratada * 1.05 ? 'bg-red-500/20 text-red-400' : 
+                                                                analysis.demandaPontaMedida < analysis.demandaPontaContratada * 0.9 ? 'bg-yellow-500/20 text-yellow-400' : 'bg-blue-500/20 text-blue-400'
+                                                            }`}>
+                                                                Utilizado Ponta: {analysis.demandaPontaMedida} kW
+                                                            </span>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <span className="text-[11px] font-semibold inline-block text-slate-400 border border-slate-700 px-2 py-1 rounded">Contratado Ponta: {analysis.demandaPontaContratada} kW</span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="overflow-hidden h-3 mb-4 text-xs flex rounded bg-[#060e1f] border border-slate-700">
+                                                        <div style={{ width: `${Math.min(100, (analysis.demandaPontaMedida / Math.max(analysis.demandaPontaContratada, 1)) * 100)}%` }} className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center transition-all duration-1000 ${
+                                                            analysis.demandaPontaMedida > analysis.demandaPontaContratada * 1.05 ? 'bg-red-500' : 
+                                                            analysis.demandaPontaMedida < analysis.demandaPontaContratada * 0.9 ? 'bg-yellow-500' : 'bg-blue-500'
+                                                        }`}></div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* Simulação de Cenários */}
+                                    <div className="bg-[#0b1325] p-6 rounded-2xl shadow-xl border border-slate-800/80">
+                                        <div className="flex items-center gap-2 mb-6">
+                                            <BarChart3 className="w-5 h-5 text-emerald-500" />
+                                            <h2 className="text-sm font-bold text-white uppercase tracking-wider">Simulação de Cenários</h2>
+                                        </div>
+                                        <ScenarioBarChart 
+                                            scenarios={[
+                                                {label: 'Fatura Atual', value: analysis.custoTotal, color: '#64748b'},
+                                                {label: 'Sem Multas/Desperdício', value: analysis.custoTotal - analysis.potencialEconomia, color: '#f59e0b', savings: analysis.custoTotal > 0 ? ((analysis.potencialEconomia/analysis.custoTotal)*100).toFixed(1) : '0'},
+                                                {label: 'Com Usina Solar', value: analysis.custoTotal - analysis.economiaSolar, color: '#10b981', savings: analysis.custoTotal > 0 ? ((analysis.economiaSolar/analysis.custoTotal)*100).toFixed(1) : '0'},
+                                                {label: 'Com GD Compartilhada', value: analysis.custoTotal - analysis.economiaGDCompartilhada, color: '#06b6d4', savings: analysis.custoTotal > 0 ? ((analysis.economiaGDCompartilhada/analysis.custoTotal)*100).toFixed(1) : '0'}
+                                            ].concat(analysis.elegibilidadeACL ? [{label: 'Mercado Livre (ACL)', value: analysis.custoTotal - analysis.economiaACL, color: '#8b5cf6', savings: analysis.custoTotal > 0 ? ((analysis.economiaACL/analysis.custoTotal)*100).toFixed(1) : '0'}] : [])}
+                                            formatCurrency={formatCurrency}
+                                        />
+                                    </div>
+
+                                    {/* ROI Solar + Projeção Anual */}
+                                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                                        <div className="bg-gradient-to-br from-[#0f1a14] to-[#0b1325] p-6 rounded-2xl shadow-xl border border-emerald-900/50">
+                                            <div className="flex items-center gap-2 mb-5">
+                                                <Sun className="w-5 h-5 text-yellow-400" />
+                                                <h2 className="text-sm font-bold text-white uppercase tracking-wider">ROI Solar</h2>
+                                            </div>
+                                            <div className="space-y-4">
+                                                <div>
+                                                    <span className="text-[9px] text-slate-500 uppercase font-bold tracking-wider">Potência Estimada</span>
+                                                    <p className="text-xl font-black text-emerald-400">{analysis.potenciaSolarKwp.toFixed(1)} kWp</p>
+                                                </div>
+                                                <div>
+                                                    <span className="text-[9px] text-slate-500 uppercase font-bold tracking-wider">Investimento Estimado</span>
+                                                    <p className="text-xl font-black text-white">{formatCurrency(analysis.investimentoSolar)}</p>
+                                                </div>
+                                                <div className="pt-3 border-t border-emerald-900/40">
+                                                    <span className="text-[9px] text-slate-500 uppercase font-bold tracking-wider">Payback Estimado</span>
+                                                    <p className="text-2xl font-black text-emerald-400">{analysis.paybackMeses} <span className="text-sm text-emerald-500/70">meses</span></p>
+                                                </div>
+                                                <div>
+                                                    <span className="text-[9px] text-slate-500 uppercase font-bold tracking-wider">Economia Acumulada (5 anos)</span>
+                                                    <p className="text-xl font-black text-yellow-400">{formatCurrency(analysis.economia5Anos)}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="lg:col-span-2 bg-[#0b1325] p-6 rounded-2xl shadow-xl border border-slate-800/80">
+                                            <div className="flex items-center gap-2 mb-5">
+                                                <Calendar className="w-5 h-5 text-emerald-500" />
+                                                <h2 className="text-sm font-bold text-white uppercase tracking-wider">Projeção Anual</h2>
+                                            </div>
+                                            <AnnualProjectionChart monthlyValue={analysis.custoTotal} savingsValue={analysis.economiaSolar} formatCurrency={formatCurrency} />
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-[#0b1325] p-6 rounded-2xl shadow-xl border border-slate-800/80">
+                                        <div className="flex items-center justify-between mb-6">
+                                            <div className="flex items-center gap-2">
+                                                <Info className="w-5 h-5 text-emerald-500" />
+                                                <h2 className="text-sm font-bold text-white uppercase tracking-wider">Diagnóstico ENGER</h2>
+                                            </div>
+                                            <span className="text-[10px] uppercase font-bold bg-[#060e1f] text-slate-400 px-3 py-1 rounded-full border border-slate-800">{analysis.alerts.length} Insights</span>
+                                        </div>
+                                        
+                                        <div className="space-y-4">
+                                            {analysis.alerts.map((alert, index) => (
+                                                <div 
+                                                    key={index} 
+                                                    className={`flex gap-4 p-4 rounded-xl border bg-[#060e1f] transition-all hover:-translate-y-1 ${
+                                                        alert.type === 'danger' ? 'border-red-900/40 shadow-[0_4px_20px_rgba(239,68,68,0.06)]' : 
+                                                        alert.type === 'warning' ? 'border-yellow-900/40 shadow-[0_4px_20px_rgba(234,179,8,0.06)]' : 
+                                                        alert.type === 'info' ? 'border-blue-900/40 shadow-[0_4px_20px_rgba(59,130,246,0.06)]' :
+                                                        'border-emerald-900/40 shadow-[0_4px_20px_rgba(16,185,129,0.06)]'
+                                                    }`}
+                                                >
+                                                    <div className="mt-0.5 p-2 bg-[#0b1325] rounded-lg shrink-0 h-fit border border-slate-800/50">
+                                                        {alert.icon}
+                                                    </div>
+                                                    <div>
+                                                        <h4 className={`text-sm font-bold mb-1.5 ${
+                                                            alert.type === 'danger' ? 'text-red-400' : 
+                                                            alert.type === 'warning' ? 'text-yellow-400' : 
+                                                            alert.type === 'info' ? 'text-blue-400' :
+                                                            'text-emerald-400'
+                                                        }`}>
+                                                            {alert.title}
+                                                        </h4>
+                                                        <p className="text-[13px] text-slate-300 leading-relaxed font-medium">
+                                                            {alert.message}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        
+                                        <div className="mt-8 pt-6 border-t border-slate-800/60">
+                                            <button 
+                                                onClick={handleGeneratePDF}
+                                                disabled={isGeneratingPDF}
+                                                className={`w-full text-white font-bold py-4 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.15)] relative overflow-hidden group ${isGeneratingPDF ? 'bg-slate-700 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-500 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:-translate-y-0.5'}`}
+                                            >
+                                                {!isGeneratingPDF && <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-white/20 to-emerald-500/0 transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>}
+                                                <FileText className={`w-5 h-5 relative z-10 ${isGeneratingPDF ? 'animate-bounce' : ''}`} />
+                                                <span className="relative z-10">
+                                                    {isGeneratingPDF ? 'Gerando PDF...' : 'Exportar Proposta Comercial PDF'}
+                                                </span>
+                                            </button>
+                                            <p className="text-center text-[10px] text-slate-500 mt-4 uppercase tracking-wider font-semibold">
+                                                Motor de cálculo baseado nas resoluções normativas 1.000/2021 (ANEEL)
+                                            </p>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                    
+                    {/* ===== TEMPLATE PDF OCULTO ===== */}
+                    {analysis && (
+                        <div style={{ position: 'absolute', left: '-9999px', top: 0 }}>
+                            <div id="proposta-template" style={{ width: '794px', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+
+                                {/* ========== PÁGINA 1: CAPA ========== */}
+                                <div style={{ width: '794px', minHeight: '1123px', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)', padding: '0', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', boxSizing: 'border-box', pageBreakAfter: 'always' }}>
+                                    {/* Barra superior emerald */}
+                                    <div style={{ height: '6px', background: 'linear-gradient(90deg, #10b981, #06b6d4, #10b981)', width: '100%' }}></div>
+                                    
+                                    {/* Conteúdo central */}
+                                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px' }}>
+                                        {/* Logo */}
+                                        <div style={{ width: '80px', height: '80px', borderRadius: '20px', background: 'linear-gradient(135deg, #10b981, #059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '30px', boxShadow: '0 0 40px rgba(16,185,129,0.3)' }}>
+                                            <span style={{ fontSize: '36px', fontWeight: '900', color: '#0f172a' }}>⚡</span>
+                                        </div>
+                                        <h1 style={{ fontSize: '56px', fontWeight: '900', color: '#ffffff', letterSpacing: '12px', margin: '0 0 8px 0', textAlign: 'center' }}>ENGER</h1>
+                                        <p style={{ fontSize: '22px', color: '#10b981', letterSpacing: '6px', margin: '0 0 12px 0', fontWeight: '600', textAlign: 'center' }}>ANALYTICS</p>
+                                        <p style={{ fontSize: '14px', color: '#64748b', letterSpacing: '3px', margin: '0 0 50px 0', textAlign: 'center' }}>MOTOR DE INTELIGÊNCIA TARIFÁRIA v4.0</p>
+                                        
+                                        {/* Separador */}
+                                        <div style={{ width: '200px', height: '1px', background: 'linear-gradient(90deg, transparent, #334155, transparent)', marginBottom: '50px' }}></div>
+                                        
+                                        <h2 style={{ fontSize: '24px', fontWeight: '300', color: '#e2e8f0', margin: '0 0 8px 0', textAlign: 'center' }}>Proposta Comercial</h2>
+                                        <p style={{ fontSize: '16px', color: '#94a3b8', margin: '0 0 60px 0', textAlign: 'center' }}>Diagnóstico de Eficiência Energética</p>
+                                        
+                                        {/* Card do cliente */}
+                                        <div style={{ background: 'rgba(30,41,59,0.7)', border: '1px solid #334155', borderRadius: '16px', padding: '30px 50px', width: '100%', maxWidth: '550px' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                                                <div>
+                                                    <p style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '2px', margin: '0 0 6px 0', fontWeight: '700' }}>Cliente</p>
+                                                    <p style={{ fontSize: '18px', color: '#ffffff', fontWeight: '700', margin: '0' }}>{formData.nomeCliente || 'Cliente'}</p>
+                                                </div>
+                                                <div style={{ textAlign: 'right' }}>
+                                                    <p style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '2px', margin: '0 0 6px 0', fontWeight: '700' }}>CNPJ/CPF</p>
+                                                    <p style={{ fontSize: '14px', color: '#cbd5e1', fontWeight: '500', margin: '0' }}>{formData.cnpjCliente || '—'}</p>
+                                                </div>
+                                            </div>
+                                            <div style={{ height: '1px', background: '#334155', margin: '12px 0' }}></div>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                <div>
+                                                    <p style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '2px', margin: '0 0 4px 0', fontWeight: '700' }}>Concessionária</p>
+                                                    <p style={{ fontSize: '13px', color: '#cbd5e1', margin: '0' }}>{analysis.concessionaria}</p>
+                                                </div>
+                                                <div style={{ textAlign: 'center' }}>
+                                                    <p style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '2px', margin: '0 0 4px 0', fontWeight: '700' }}>Enquadramento</p>
+                                                    <p style={{ fontSize: '13px', color: '#10b981', fontWeight: '600', margin: '0' }}>Grupo {analysis.grupoTarifario} — {analysis.grupoTarifario === 'A' ? `Tarifa ${analysis.modalidadeTarifaria}` : 'Baixa Tensão'}</p>
+                                                </div>
+                                                <div style={{ textAlign: 'right' }}>
+                                                    <p style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '2px', margin: '0 0 4px 0', fontWeight: '700' }}>Referência</p>
+                                                    <p style={{ fontSize: '13px', color: '#cbd5e1', margin: '0' }}>{formData.referenciaFatura || new Date().toLocaleDateString('pt-BR')}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Rodapé da capa */}
+                                    <div style={{ padding: '20px 50px', borderTop: '1px solid #1e293b' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <p style={{ fontSize: '9px', color: '#475569', margin: '0' }}>Resoluções Normativas ANEEL 1.000/2021</p>
+                                            <p style={{ fontSize: '9px', color: '#475569', margin: '0' }}>{new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+                                        </div>
+                                    </div>
+                                    <div style={{ height: '6px', background: 'linear-gradient(90deg, #10b981, #06b6d4, #10b981)' }}></div>
+                                </div>
+
+                                {/* ========== PÁGINA 2: RESUMO EXECUTIVO ========== */}
+                                <div style={{ width: '794px', minHeight: '1123px', background: '#ffffff', padding: '50px', boxSizing: 'border-box', pageBreakAfter: 'always' }}>
+                                    {/* Header com barra */}
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '40px', paddingBottom: '20px', borderBottom: '3px solid #10b981' }}>
+                                        <div style={{ width: '4px', height: '32px', background: '#10b981', borderRadius: '2px' }}></div>
+                                        <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0f172a', margin: '0', letterSpacing: '1px' }}>RESUMO EXECUTIVO</h2>
+                                    </div>
+                                    
+                                    {/* Diagnóstico hero */}
+                                    <div style={{ background: analysis.efficiencyScore >= 80 ? 'linear-gradient(135deg, #ecfdf5, #d1fae5)' : analysis.efficiencyScore >= 50 ? 'linear-gradient(135deg, #fffbeb, #fef3c7)' : 'linear-gradient(135deg, #fef2f2, #fecaca)', borderLeft: `5px solid ${analysis.efficiencyScore >= 80 ? '#10b981' : analysis.efficiencyScore >= 50 ? '#f59e0b' : '#ef4444'}`, borderRadius: '12px', padding: '24px 28px', marginBottom: '35px' }}>
+                                        <p style={{ fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '2px', color: analysis.efficiencyScore >= 80 ? '#059669' : analysis.efficiencyScore >= 50 ? '#d97706' : '#dc2626', margin: '0 0 8px 0' }}>Diagnóstico ENGER</p>
+                                        <p style={{ fontSize: '15px', color: '#334155', lineHeight: '1.6', margin: '0' }}>
+                                            {analysis.efficiencyScore >= 80 
+                                                ? `A fatura de ${formData.nomeCliente || 'do cliente'} apresenta boa eficiência tarifária (Score ${analysis.efficiencyScore.toFixed(0)}/100). O principal caminho para redução de custos é investir em geração própria (solar fotovoltaica) ou migrar para o Mercado Livre de Energia, com economia estimada de ${formatCurrency(Math.max(analysis.economiaSolar, analysis.economiaACL || 0))}/mês.`
+                                                : analysis.efficiencyScore >= 50
+                                                ? `Foram identificadas oportunidades de economia na fatura de ${formData.nomeCliente || 'do cliente'} (Score ${analysis.efficiencyScore.toFixed(0)}/100). Ações corretivas como adequação de demanda e eliminação de multas podem gerar economia imediata de ${formatCurrency(analysis.potencialEconomia)}/mês. Com geração solar, a economia pode chegar a ${formatCurrency(analysis.economiaSolar)}/mês.`
+                                                : `A fatura de ${formData.nomeCliente || 'do cliente'} apresenta desperdícios críticos (Score ${analysis.efficiencyScore.toFixed(0)}/100), totalizando ${formatCurrency(analysis.potencialEconomia)}/mês em multas e penalidades. É urgente implementar ações corretivas para eliminar os custos desnecessários identificados neste diagnóstico.`
+                                            }
+                                        </p>
+                                    </div>
+                                    
+                                    {/* Grid de 6 KPIs */}
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '30px' }}>
+                                        {/* KPI 1: Fatura */}
+                                        <div style={{ background: '#0f172a', borderRadius: '14px', padding: '22px', textAlign: 'center' }}>
+                                            <p style={{ fontSize: '9px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '2px', margin: '0 0 10px 0', fontWeight: '700' }}>Fatura Mensal</p>
+                                            <p style={{ fontSize: '28px', fontWeight: '900', color: '#ffffff', margin: '0 0 4px 0' }}>{formatCurrency(analysis.custoTotal)}</p>
+                                            <p style={{ fontSize: '10px', color: '#475569', margin: '0' }}>Valor total estimado</p>
+                                        </div>
+                                        {/* KPI 2: Desperdício */}
+                                        <div style={{ background: '#0f172a', borderRadius: '14px', padding: '22px', textAlign: 'center' }}>
+                                            <p style={{ fontSize: '9px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '2px', margin: '0 0 10px 0', fontWeight: '700' }}>Desperdício Identificado</p>
+                                            <p style={{ fontSize: '28px', fontWeight: '900', color: '#ef4444', margin: '0 0 4px 0' }}>{formatCurrency(analysis.potencialEconomia)}</p>
+                                            <p style={{ fontSize: '10px', color: '#475569', margin: '0' }}>Multas e penalidades</p>
+                                        </div>
+                                        {/* KPI 3: Score */}
+                                        <div style={{ background: '#0f172a', borderRadius: '14px', padding: '22px', textAlign: 'center' }}>
+                                            <p style={{ fontSize: '9px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '2px', margin: '0 0 10px 0', fontWeight: '700' }}>Score de Eficiência</p>
+                                            <p style={{ fontSize: '28px', fontWeight: '900', color: analysis.efficiencyScore >= 80 ? '#10b981' : analysis.efficiencyScore >= 50 ? '#f59e0b' : '#ef4444', margin: '0 0 4px 0' }}>{analysis.efficiencyScore.toFixed(0)} / 100</p>
+                                            <p style={{ fontSize: '10px', color: '#475569', margin: '0' }}>{analysis.efficiencyScore >= 80 ? 'Excelente' : analysis.efficiencyScore >= 50 ? 'Atenção necessária' : 'Crítico'}</p>
+                                        </div>
+                                        {/* KPI 4: Custo/kWh */}
+                                        <div style={{ background: '#f8fafc', borderRadius: '14px', padding: '22px', textAlign: 'center', border: '1px solid #e2e8f0' }}>
+                                            <p style={{ fontSize: '9px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '2px', margin: '0 0 10px 0', fontWeight: '700' }}>Custo Efetivo / kWh</p>
+                                            <p style={{ fontSize: '24px', fontWeight: '900', color: '#06b6d4', margin: '0 0 4px 0' }}>R$ {analysis.custoKwhEfetivo.toFixed(4)}</p>
+                                            <p style={{ fontSize: '10px', color: '#94a3b8', margin: '0' }}>Valor real pago por kWh</p>
+                                        </div>
+                                        {/* KPI 5: Economia Solar */}
+                                        <div style={{ background: '#f8fafc', borderRadius: '14px', padding: '22px', textAlign: 'center', border: '1px solid #e2e8f0' }}>
+                                            <p style={{ fontSize: '9px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '2px', margin: '0 0 10px 0', fontWeight: '700' }}>Economia Solar Mensal</p>
+                                            <p style={{ fontSize: '24px', fontWeight: '900', color: '#10b981', margin: '0 0 4px 0' }}>{formatCurrency(analysis.economiaSolar)}</p>
+                                            <p style={{ fontSize: '10px', color: '#94a3b8', margin: '0' }}>Geração própria fotovoltaica</p>
+                                        </div>
+                                        {/* KPI 6: Fator de carga ou Consumo */}
+                                        <div style={{ background: '#f8fafc', borderRadius: '14px', padding: '22px', textAlign: 'center', border: '1px solid #e2e8f0' }}>
+                                            <p style={{ fontSize: '9px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '2px', margin: '0 0 10px 0', fontWeight: '700' }}>{analysis.grupoTarifario === 'A' ? 'Fator de Carga' : 'Consumo Total'}</p>
+                                            <p style={{ fontSize: '24px', fontWeight: '900', color: '#8b5cf6', margin: '0 0 4px 0' }}>{analysis.grupoTarifario === 'A' ? `${analysis.fatorCarga.toFixed(1)}%` : `${analysis.consumoTotal.toLocaleString('pt-BR')} kWh`}</p>
+                                            <p style={{ fontSize: '10px', color: '#94a3b8', margin: '0' }}>{analysis.grupoTarifario === 'A' ? 'Utilização da demanda' : 'Energia consumida no mês'}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Indicadores adicionais em linha */}
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
+                                        <div style={{ background: '#f0fdf4', borderRadius: '10px', padding: '16px', textAlign: 'center', border: '1px solid #bbf7d0' }}>
+                                            <p style={{ fontSize: '8px', color: '#16a34a', textTransform: 'uppercase', fontWeight: '800', letterSpacing: '1px', margin: '0 0 6px 0' }}>Payback Solar</p>
+                                            <p style={{ fontSize: '18px', fontWeight: '900', color: '#059669', margin: '0' }}>{analysis.paybackMeses > 0 ? `${analysis.paybackMeses} meses` : 'N/A'}</p>
+                                        </div>
+                                        <div style={{ background: '#f0fdf4', borderRadius: '10px', padding: '16px', textAlign: 'center', border: '1px solid #bbf7d0' }}>
+                                            <p style={{ fontSize: '8px', color: '#16a34a', textTransform: 'uppercase', fontWeight: '800', letterSpacing: '1px', margin: '0 0 6px 0' }}>Investimento Solar</p>
+                                            <p style={{ fontSize: '18px', fontWeight: '900', color: '#059669', margin: '0' }}>{formatCurrency(analysis.investimentoSolar)}</p>
+                                        </div>
+                                        <div style={{ background: '#eff6ff', borderRadius: '10px', padding: '16px', textAlign: 'center', border: '1px solid #bfdbfe' }}>
+                                            <p style={{ fontSize: '8px', color: '#2563eb', textTransform: 'uppercase', fontWeight: '800', letterSpacing: '1px', margin: '0 0 6px 0' }}>ICMS + PIS/COFINS</p>
+                                            <p style={{ fontSize: '18px', fontWeight: '900', color: '#1d4ed8', margin: '0' }}>{formatCurrency(analysis.totalImpostos)}</p>
+                                        </div>
+                                        <div style={{ background: '#faf5ff', borderRadius: '10px', padding: '16px', textAlign: 'center', border: '1px solid #e9d5ff' }}>
+                                            <p style={{ fontSize: '8px', color: '#7c3aed', textTransform: 'uppercase', fontWeight: '800', letterSpacing: '1px', margin: '0 0 6px 0' }}>GD Compartilhada</p>
+                                            <p style={{ fontSize: '18px', fontWeight: '900', color: '#6d28d9', margin: '0' }}>{formatCurrency(analysis.economiaGDCompartilhada)}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Rodapé */}
+                                    <div style={{ marginTop: 'auto', paddingTop: '30px', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', position: 'absolute', bottom: '30px', left: '50px', right: '50px' }}>
+                                        <p style={{ fontSize: '8px', color: '#94a3b8', margin: '0' }}>ENGER Analytics v4.0 — Proposta Comercial — {formData.nomeCliente || 'Cliente'}</p>
+                                        <p style={{ fontSize: '8px', color: '#94a3b8', margin: '0' }}>Página 2 de 8</p>
+                                    </div>
+                                </div>
+
+                                {/* ========== PÁGINA 3: COMPOSIÇÃO DA FATURA ========== */}
+                                <div style={{ width: '794px', minHeight: '1123px', background: '#ffffff', padding: '50px', boxSizing: 'border-box', pageBreakAfter: 'always', position: 'relative' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '35px', paddingBottom: '20px', borderBottom: '3px solid #10b981' }}>
+                                        <div style={{ width: '4px', height: '32px', background: '#10b981', borderRadius: '2px' }}></div>
+                                        <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0f172a', margin: '0' }}>COMPOSIÇÃO DA FATURA</h2>
+                                        <p style={{ fontSize: '12px', color: '#94a3b8', margin: '0', marginLeft: 'auto' }}>Detalhamento de cada componente do custo mensal</p>
+                                    </div>
+                                    
+                                    {/* Barras de composição */}
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                        {(analysis.composicaoFatura || []).map((item, index) => {
+                                            const pct = analysis.custoTotal > 0 ? (item.value / analysis.custoTotal) * 100 : 0;
+                                            return (
+                                                <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                                    <p style={{ width: '150px', fontSize: '11px', fontWeight: '600', color: '#334155', margin: '0', textAlign: 'right' }}>{item.label}</p>
+                                                    <div style={{ flex: 1, background: '#f1f5f9', borderRadius: '8px', height: '28px', position: 'relative', overflow: 'hidden' }}>
+                                                        <div style={{ width: `${Math.max(2, pct)}%`, height: '100%', background: item.color, borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: '8px', transition: 'width 0.5s ease' }}>
+                                                            {pct > 12 && <span style={{ fontSize: '10px', fontWeight: '700', color: '#ffffff' }}>{pct.toFixed(1)}%</span>}
+                                                        </div>
+                                                    </div>
+                                                    <p style={{ width: '100px', fontSize: '12px', fontWeight: '700', color: '#0f172a', margin: '0', textAlign: 'right' }}>{formatCurrency(item.value)}</p>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                    
+                                    {/* Total + impostos */}
+                                    <div style={{ marginTop: '30px', paddingTop: '20px', borderTop: '2px solid #0f172a', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <div>
+                                            <p style={{ fontSize: '11px', color: '#64748b', margin: '0 0 4px 0' }}>Total da Fatura</p>
+                                            <p style={{ fontSize: '32px', fontWeight: '900', color: '#0f172a', margin: '0' }}>{formatCurrency(analysis.custoTotal)}</p>
+                                        </div>
+                                        <div style={{ textAlign: 'right' }}>
+                                            <p style={{ fontSize: '10px', color: '#94a3b8', margin: '0 0 4px 0' }}>ICMS ({formData.icmsPercent}%): <strong style={{ color: '#334155' }}>{formatCurrency(analysis.valorICMS)}</strong></p>
+                                            <p style={{ fontSize: '10px', color: '#94a3b8', margin: '0' }}>PIS/COFINS ({formData.pisCofinsPercent}%): <strong style={{ color: '#334155' }}>{formatCurrency(analysis.valorPISCOFINS)}</strong></p>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Rodapé */}
+                                    <div style={{ position: 'absolute', bottom: '30px', left: '50px', right: '50px', borderTop: '1px solid #e2e8f0', paddingTop: '12px', display: 'flex', justifyContent: 'space-between' }}>
+                                        <p style={{ fontSize: '8px', color: '#94a3b8', margin: '0' }}>ENGER Analytics v4.0 — Proposta Comercial — {formData.nomeCliente || 'Cliente'}</p>
+                                        <p style={{ fontSize: '8px', color: '#94a3b8', margin: '0' }}>Página 3 de 8</p>
+                                    </div>
+                                </div>
+
+                                {/* ========== PÁGINA 4: DIAGNÓSTICO TÉCNICO ========== */}
+                                <div style={{ width: '794px', minHeight: '1123px', background: '#ffffff', padding: '50px', boxSizing: 'border-box', pageBreakAfter: 'always', position: 'relative' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '35px', paddingBottom: '20px', borderBottom: '3px solid #ef4444' }}>
+                                        <div style={{ width: '4px', height: '32px', background: '#ef4444', borderRadius: '2px' }}></div>
+                                        <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0f172a', margin: '0' }}>DIAGNÓSTICO TÉCNICO</h2>
+                                    </div>
+                                    
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                                        {/* Coluna: Problemas */}
+                                        <div>
+                                            <p style={{ fontSize: '11px', fontWeight: '800', color: '#ef4444', textTransform: 'uppercase', letterSpacing: '2px', margin: '0 0 16px 0' }}>Problemas Identificados</p>
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                                {analysis.grupoTarifario === 'A' && analysis.multaUltrapassagem > 0 && (
+                                                    <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '10px', padding: '14px' }}>
+                                                        <p style={{ fontSize: '12px', fontWeight: '700', color: '#dc2626', margin: '0 0 4px 0' }}>⚡ Multa Ultrapassagem FP: {formatCurrency(analysis.multaUltrapassagem)}</p>
+                                                        <p style={{ fontSize: '10px', color: '#64748b', margin: '0' }}>Demanda medida ({analysis.demandaMedida} kW) excedeu contrato ({analysis.demandaContratada} kW)</p>
+                                                    </div>
+                                                )}
+                                                {analysis.grupoTarifario === 'A' && analysis.multaUltrapassagemPonta > 0 && (
+                                                    <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '10px', padding: '14px' }}>
+                                                        <p style={{ fontSize: '12px', fontWeight: '700', color: '#dc2626', margin: '0 0 4px 0' }}>⚡ Multa Ultrapassagem Ponta: {formatCurrency(analysis.multaUltrapassagemPonta)}</p>
+                                                        <p style={{ fontSize: '10px', color: '#64748b', margin: '0' }}>Demanda ponta excedeu o contratado</p>
+                                                    </div>
+                                                )}
+                                                {analysis.custoReativo > 0 && (
+                                                    <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '10px', padding: '14px' }}>
+                                                        <p style={{ fontSize: '12px', fontWeight: '700', color: '#dc2626', margin: '0 0 4px 0' }}>⚡ Energia Reativa: {formatCurrency(analysis.custoReativo)}/mês</p>
+                                                        <p style={{ fontSize: '10px', color: '#64748b', margin: '0' }}>Fator de potência abaixo de 0,92</p>
+                                                    </div>
+                                                )}
+                                                {analysis.percentualOcioso > 10 && (
+                                                    <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '10px', padding: '14px' }}>
+                                                        <p style={{ fontSize: '12px', fontWeight: '700', color: '#d97706', margin: '0 0 4px 0' }}>⚡ Demanda Ociosa: {analysis.percentualOcioso.toFixed(1)}%</p>
+                                                        <p style={{ fontSize: '10px', color: '#64748b', margin: '0' }}>Custo de ociosidade: {formatCurrency(analysis.custoOciosidade)}/mês</p>
+                                                    </div>
+                                                )}
+                                                {analysis.custoAtraso > 0 && (
+                                                    <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '10px', padding: '14px' }}>
+                                                        <p style={{ fontSize: '12px', fontWeight: '700', color: '#dc2626', margin: '0 0 4px 0' }}>⚡ Juros/Multa Atraso: {formatCurrency(analysis.custoAtraso)}</p>
+                                                        <p style={{ fontSize: '10px', color: '#64748b', margin: '0' }}>Regularizar pagamentos e negociar débitos</p>
+                                                    </div>
+                                                )}
+                                                {analysis.potencialEconomia === 0 && (
+                                                    <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '10px', padding: '14px' }}>
+                                                        <p style={{ fontSize: '12px', fontWeight: '700', color: '#16a34a', margin: '0' }}>→ Nenhuma irregularidade crítica identificada</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                        
+                                        {/* Coluna: Ações */}
+                                        <div>
+                                            <p style={{ fontSize: '11px', fontWeight: '800', color: '#10b981', textTransform: 'uppercase', letterSpacing: '2px', margin: '0 0 16px 0' }}>Plano de Ação</p>
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                                {analysis.grupoTarifario === 'A' && analysis.multaUltrapassagem > 0 && (
+                                                    <div style={{ background: '#f0fdf4', borderLeft: '4px solid #10b981', borderRadius: '0 10px 10px 0', padding: '12px 14px' }}>
+                                                        <p style={{ fontSize: '11px', color: '#0f172a', margin: '0' }}>✓ Solicitar aumento do contrato de demanda fora ponta para ~{Math.ceil(analysis.demandaMedida * 1.05)} kW</p>
+                                                    </div>
+                                                )}
+                                                {analysis.custoReativo > 0 && (
+                                                    <div style={{ background: '#f0fdf4', borderLeft: '4px solid #10b981', borderRadius: '0 10px 10px 0', padding: '12px 14px' }}>
+                                                        <p style={{ fontSize: '11px', color: '#0f172a', margin: '0' }}>✓ Instalar/revisar banco de capacitores (ROI {'<'} 8 meses)</p>
+                                                    </div>
+                                                )}
+                                                {analysis.percentualOcioso > 10 && (
+                                                    <div style={{ background: '#f0fdf4', borderLeft: '4px solid #10b981', borderRadius: '0 10px 10px 0', padding: '12px 14px' }}>
+                                                        <p style={{ fontSize: '11px', color: '#0f172a', margin: '0' }}>✓ Reduzir contrato para ~{Math.ceil(analysis.demandaMedida * 1.05)} kW</p>
+                                                    </div>
+                                                )}
+                                                {analysis.custoAtraso > 0 && (
+                                                    <div style={{ background: '#f0fdf4', borderLeft: '4px solid #10b981', borderRadius: '0 10px 10px 0', padding: '12px 14px' }}>
+                                                        <p style={{ fontSize: '11px', color: '#0f172a', margin: '0' }}>✓ Regularizar pagamentos e negociar débitos com a distribuidora</p>
+                                                    </div>
+                                                )}
+                                                <div style={{ background: '#f0fdf4', borderLeft: '4px solid #10b981', borderRadius: '0 10px 10px 0', padding: '12px 14px' }}>
+                                                    <p style={{ fontSize: '11px', color: '#0f172a', margin: '0' }}>✓ Avaliar geração solar fotovoltaica ({analysis.potenciaSolarKwp.toFixed(1)} kWp)</p>
+                                                </div>
+                                                {analysis.elegibilidadeACL && (
+                                                    <div style={{ background: '#f5f3ff', borderLeft: '4px solid #8b5cf6', borderRadius: '0 10px 10px 0', padding: '12px 14px' }}>
+                                                        <p style={{ fontSize: '11px', color: '#0f172a', margin: '0' }}>✓ Migrar para Mercado Livre (ACL) — economia estimada: {formatCurrency(analysis.economiaACL)}/mês</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Medidor de Demanda visual (Grupo A) */}
+                                    {analysis.grupoTarifario === 'A' && (
+                                        <div style={{ marginTop: '30px', background: '#f8fafc', borderRadius: '14px', padding: '20px', border: '1px solid #e2e8f0' }}>
+                                            <p style={{ fontSize: '10px', fontWeight: '800', color: '#64748b', textTransform: 'uppercase', letterSpacing: '2px', margin: '0 0 12px 0' }}>Medidor de Demanda (Fora Ponta)</p>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                                                <span style={{ fontSize: '11px', color: '#334155' }}>Contratada: <strong>{analysis.demandaContratada} kW</strong></span>
+                                                <span style={{ fontSize: '11px', color: '#334155' }}>Medida: <strong>{analysis.demandaMedida} kW</strong></span>
+                                                <span style={{ fontSize: '11px', color: analysis.fatorCarga > 105 ? '#ef4444' : analysis.fatorCarga < 70 ? '#f59e0b' : '#10b981', fontWeight: '700' }}>Utilização: {analysis.fatorCarga.toFixed(1)}%</span>
+                                            </div>
+                                            <div style={{ width: '100%', height: '20px', background: '#e2e8f0', borderRadius: '10px', overflow: 'hidden' }}>
+                                                <div style={{ width: `${Math.min(100, analysis.fatorCarga)}%`, height: '100%', borderRadius: '10px', background: analysis.fatorCarga > 105 ? '#ef4444' : analysis.fatorCarga < 70 ? '#f59e0b' : '#3b82f6' }}></div>
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+                                    <div style={{ position: 'absolute', bottom: '30px', left: '50px', right: '50px', borderTop: '1px solid #e2e8f0', paddingTop: '12px', display: 'flex', justifyContent: 'space-between' }}>
+                                        <p style={{ fontSize: '8px', color: '#94a3b8', margin: '0' }}>ENGER Analytics v4.0 — Proposta Comercial — {formData.nomeCliente || 'Cliente'}</p>
+                                        <p style={{ fontSize: '8px', color: '#94a3b8', margin: '0' }}>Página 4 de 8</p>
+                                    </div>
+                                </div>
+
+                                {/* ========== PÁGINA 5: SIMULAÇÃO DE CENÁRIOS ========== */}
+                                <div style={{ width: '794px', minHeight: '1123px', background: '#ffffff', padding: '50px', boxSizing: 'border-box', pageBreakAfter: 'always', position: 'relative' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '35px', paddingBottom: '20px', borderBottom: '3px solid #f59e0b' }}>
+                                        <div style={{ width: '4px', height: '32px', background: '#f59e0b', borderRadius: '2px' }}></div>
+                                        <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0f172a', margin: '0' }}>SIMULAÇÃO DE CENÁRIOS</h2>
+                                    </div>
+                                    
+                                    {/* Cards de cenários */}
+                                    {[
+                                        { label: 'Situação Atual', valor: analysis.custoTotal, economia: 0, cor: '#64748b', corBg: '#f8fafc', desc: 'Custo mensal com o enquadramento tarifário atual, incluindo todas as penalidades.' },
+                                        { label: 'Eliminar Multas', valor: analysis.custoTotal - analysis.potencialEconomia, economia: analysis.potencialEconomia, cor: '#f59e0b', corBg: '#fffbeb', desc: 'Adequação contratual para eliminar multas de ultrapassagem, reativo e ociosidade.' },
+                                        { label: 'Com Usina Solar', valor: analysis.custoTotal - analysis.economiaSolar, economia: analysis.economiaSolar, cor: '#10b981', corBg: '#f0fdf4', desc: `Instalação de usina FV de ${analysis.potenciaSolarKwp.toFixed(0)} kWp com payback de ${analysis.paybackMeses} meses.` },
+                                        { label: 'GD Compartilhada', valor: analysis.custoTotal - analysis.economiaGDCompartilhada, economia: analysis.economiaGDCompartilhada, cor: '#06b6d4', corBg: '#ecfeff', desc: 'Assinatura de fazenda solar remota. Sem investimento, sem obra, sem manutenção.' }
+                                    ].concat(analysis.elegibilidadeACL ? [{ label: 'Mercado Livre (ACL)', valor: analysis.custoTotal - analysis.economiaACL, economia: analysis.economiaACL, cor: '#8b5cf6', corBg: '#f5f3ff', desc: 'Migração para o Ambiente de Contratação Livre com desconto estimado de ~30%.' }] : []).map((cenario, i) => (
+                                        <div key={i} style={{ background: cenario.corBg, border: `2px solid ${cenario.cor}20`, borderLeft: `5px solid ${cenario.cor}`, borderRadius: '12px', padding: '20px 24px', marginBottom: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <div style={{ flex: 1 }}>
+                                                <p style={{ fontSize: '14px', fontWeight: '800', color: cenario.cor, margin: '0 0 4px 0' }}>{cenario.label}</p>
+                                                <p style={{ fontSize: '10px', color: '#64748b', margin: '0', maxWidth: '350px' }}>{cenario.desc}</p>
+                                            </div>
+                                            <div style={{ textAlign: 'center', padding: '0 20px' }}>
+                                                <p style={{ fontSize: '8px', color: '#94a3b8', textTransform: 'uppercase', fontWeight: '700', margin: '0 0 4px 0' }}>Custo Mensal</p>
+                                                <p style={{ fontSize: '20px', fontWeight: '900', color: '#0f172a', margin: '0' }}>{formatCurrency(cenario.valor)}</p>
+                                            </div>
+                                            <div style={{ textAlign: 'center', minWidth: '120px' }}>
+                                                <p style={{ fontSize: '8px', color: '#94a3b8', textTransform: 'uppercase', fontWeight: '700', margin: '0 0 4px 0' }}>Economia</p>
+                                                <p style={{ fontSize: '20px', fontWeight: '900', color: cenario.economia > 0 ? cenario.cor : '#94a3b8', margin: '0' }}>{cenario.economia > 0 ? formatCurrency(cenario.economia) : '—'}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    
+                                    <div style={{ position: 'absolute', bottom: '30px', left: '50px', right: '50px', borderTop: '1px solid #e2e8f0', paddingTop: '12px', display: 'flex', justifyContent: 'space-between' }}>
+                                        <p style={{ fontSize: '8px', color: '#94a3b8', margin: '0' }}>ENGER Analytics v4.0 — Proposta Comercial — {formData.nomeCliente || 'Cliente'}</p>
+                                        <p style={{ fontSize: '8px', color: '#94a3b8', margin: '0' }}>Página 5 de 8</p>
+                                    </div>
+                                </div>
+
+                                {/* ========== PÁGINA 6: ANÁLISE SOLAR ========== */}
+                                <div style={{ width: '794px', minHeight: '1123px', background: '#ffffff', padding: '50px', boxSizing: 'border-box', pageBreakAfter: 'always', position: 'relative' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '35px', paddingBottom: '20px', borderBottom: '3px solid #10b981' }}>
+                                        <div style={{ width: '4px', height: '32px', background: '#10b981', borderRadius: '2px' }}></div>
+                                        <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0f172a', margin: '0' }}>ANÁLISE SOLAR FOTOVOLTAICA</h2>
+                                    </div>
+                                    
+                                    {/* KPIs Solar */}
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px', marginBottom: '35px' }}>
+                                        <div style={{ background: '#0f172a', borderRadius: '14px', padding: '20px', textAlign: 'center' }}>
+                                            <p style={{ fontSize: '8px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: '700', margin: '0 0 8px 0' }}>Potência</p>
+                                            <p style={{ fontSize: '24px', fontWeight: '900', color: '#10b981', margin: '0' }}>{analysis.potenciaSolarKwp.toFixed(1)} kWp</p>
+                                        </div>
+                                        <div style={{ background: '#0f172a', borderRadius: '14px', padding: '20px', textAlign: 'center' }}>
+                                            <p style={{ fontSize: '8px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: '700', margin: '0 0 8px 0' }}>Investimento</p>
+                                            <p style={{ fontSize: '24px', fontWeight: '900', color: '#ffffff', margin: '0' }}>{formatCurrency(analysis.investimentoSolar)}</p>
+                                        </div>
+                                        <div style={{ background: '#0f172a', borderRadius: '14px', padding: '20px', textAlign: 'center' }}>
+                                            <p style={{ fontSize: '8px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: '700', margin: '0 0 8px 0' }}>Payback</p>
+                                            <p style={{ fontSize: '24px', fontWeight: '900', color: '#10b981', margin: '0' }}>{analysis.paybackMeses} <span style={{ fontSize: '12px', color: '#64748b' }}>meses</span></p>
+                                        </div>
+                                        <div style={{ background: '#0f172a', borderRadius: '14px', padding: '20px', textAlign: 'center' }}>
+                                            <p style={{ fontSize: '8px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: '700', margin: '0 0 8px 0' }}>Economia 5 Anos</p>
+                                            <p style={{ fontSize: '24px', fontWeight: '900', color: '#f59e0b', margin: '0' }}>{formatCurrency(analysis.economia5Anos)}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Tabela de projeção */}
+                                    <p style={{ fontSize: '14px', fontWeight: '700', color: '#0f172a', margin: '0 0 16px 0' }}>Projeção de Retorno do Investimento</p>
+                                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px' }}>
+                                        <thead>
+                                            <tr style={{ background: '#0f172a' }}>
+                                                {['Ano', 'Gasto Atual', 'Com Solar', 'Economia Acum.', 'Invest. Restante'].map((h, i) => (
+                                                    <th key={i} style={{ padding: '12px 14px', color: '#ffffff', fontWeight: '700', textAlign: 'left', fontSize: '10px' }}>{h}</th>
+                                                ))}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {[1,2,3,4,5].map(ano => {
+                                                const custoAnual = analysis.custoTotal * 12 * ano;
+                                                const custoOtim = (analysis.custoTotal - analysis.economiaSolar) * 12 * ano;
+                                                const econAcum = (custoAnual - custoOtim);
+                                                const invRest = Math.max(0, analysis.investimentoSolar - econAcum);
+                                                return (
+                                                    <tr key={ano} style={{ background: ano % 2 === 0 ? '#f8fafc' : '#ffffff' }}>
+                                                        <td style={{ padding: '10px 14px', fontWeight: '700', color: '#0f172a' }}>Ano {ano}</td>
+                                                        <td style={{ padding: '10px 14px', color: '#ef4444' }}>{formatCurrency(custoAnual)}</td>
+                                                        <td style={{ padding: '10px 14px', color: '#10b981' }}>{formatCurrency(custoOtim)}</td>
+                                                        <td style={{ padding: '10px 14px', color: '#10b981', fontWeight: '700' }}>{formatCurrency(econAcum)}</td>
+                                                        <td style={{ padding: '10px 14px', color: invRest > 0 ? '#f59e0b' : '#10b981', fontWeight: '700' }}>{invRest > 0 ? formatCurrency(invRest) : '→ PAGO'}</td>
+                                                    </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </table>
+                                    
+                                    <div style={{ position: 'absolute', bottom: '30px', left: '50px', right: '50px', borderTop: '1px solid #e2e8f0', paddingTop: '12px', display: 'flex', justifyContent: 'space-between' }}>
+                                        <p style={{ fontSize: '8px', color: '#94a3b8', margin: '0' }}>ENGER Analytics v4.0 — Proposta Comercial — {formData.nomeCliente || 'Cliente'}</p>
+                                        <p style={{ fontSize: '8px', color: '#94a3b8', margin: '0' }}>Página 6 de 8</p>
+                                    </div>
+                                </div>
+
+                                {/* ========== PÁGINA 7: RECOMENDAÇÃO ESTRATÉGICA ========== */}
+                                <div style={{ width: '794px', minHeight: '1123px', background: '#ffffff', padding: '50px', boxSizing: 'border-box', pageBreakAfter: 'always', position: 'relative' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '35px', paddingBottom: '20px', borderBottom: '3px solid #8b5cf6' }}>
+                                        <div style={{ width: '4px', height: '32px', background: '#8b5cf6', borderRadius: '2px' }}></div>
+                                        <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0f172a', margin: '0' }}>RECOMENDAÇÃO ESTRATÉGICA</h2>
+                                    </div>
+                                    <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '24px' }}>Plano de ação personalizado com múltiplas opções para diferentes contextos e perfis de investimento.</p>
+                                    
+                                    {/* Opção A */}
+                                    <div style={{ border: '2px solid #f59e0b', borderRadius: '14px', marginBottom: '16px', overflow: 'hidden' }}>
+                                        <div style={{ background: '#fffbeb', padding: '20px 24px' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                                                <span style={{ fontSize: '10px', fontWeight: '900', color: '#92400e', letterSpacing: '3px' }}>OPÇÃO A</span>
+                                                <span style={{ fontSize: '14px', fontWeight: '800', color: '#92400e' }}>Ação Imediata — Sem Investimento</span>
+                                            </div>
+                                            <p style={{ fontSize: '11px', color: '#78716c', margin: '0 0 14px 0', lineHeight: '1.5' }}>
+                                                {analysis.grupoTarifario === 'A'
+                                                    ? `Adequar o contrato de demanda (de ${analysis.demandaContratada} kW para ~${Math.ceil(analysis.demandaMedida * 1.05)} kW), instalar banco de capacitores se aplicável, regularizar pagamentos.`
+                                                    : 'Regularizar pagamentos em atraso, negociar débitos acumulados e avaliar mudança de classe de consumo.'}
+                                            </p>
+                                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
+                                                <div><p style={{ fontSize: '8px', color: '#78716c', fontWeight: '700', margin: '0 0 4px 0' }}>ECONOMIA</p><p style={{ fontSize: '16px', fontWeight: '900', color: '#f59e0b', margin: '0' }}>{formatCurrency(analysis.potencialEconomia)}</p></div>
+                                                <div><p style={{ fontSize: '8px', color: '#78716c', fontWeight: '700', margin: '0 0 4px 0' }}>INVESTIMENTO</p><p style={{ fontSize: '16px', fontWeight: '900', color: '#0f172a', margin: '0' }}>Mínimo</p></div>
+                                                <div><p style={{ fontSize: '8px', color: '#78716c', fontWeight: '700', margin: '0 0 4px 0' }}>PRAZO</p><p style={{ fontSize: '16px', fontWeight: '900', color: '#0f172a', margin: '0' }}>Imediato</p></div>
+                                                <div><p style={{ fontSize: '8px', color: '#78716c', fontWeight: '700', margin: '0 0 4px 0' }}>IDEAL PARA</p><p style={{ fontSize: '10px', fontWeight: '600', color: '#78716c', margin: '0' }}>Resultado rápido sem capital</p></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Opção B */}
+                                    <div style={{ border: '2px solid #10b981', borderRadius: '14px', marginBottom: '16px', overflow: 'hidden' }}>
+                                        <div style={{ background: '#ecfdf5', padding: '20px 24px' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                                                <span style={{ fontSize: '10px', fontWeight: '900', color: '#065f46', letterSpacing: '3px' }}>OPÇÃO B</span>
+                                                <span style={{ fontSize: '14px', fontWeight: '800', color: '#065f46' }}>Geração Solar Própria — Maior Retorno</span>
+                                            </div>
+                                            <p style={{ fontSize: '11px', color: '#78716c', margin: '0 0 14px 0', lineHeight: '1.5' }}>
+                                                Instalação de usina fotovoltaica de {analysis.potenciaSolarKwp.toFixed(0)} kWp. Investimento de {formatCurrency(analysis.investimentoSolar)} com retorno em {analysis.paybackMeses} meses.
+                                            </p>
+                                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
+                                                <div><p style={{ fontSize: '8px', color: '#78716c', fontWeight: '700', margin: '0 0 4px 0' }}>ECONOMIA</p><p style={{ fontSize: '16px', fontWeight: '900', color: '#10b981', margin: '0' }}>{formatCurrency(analysis.economiaSolar)}</p></div>
+                                                <div><p style={{ fontSize: '8px', color: '#78716c', fontWeight: '700', margin: '0 0 4px 0' }}>INVESTIMENTO</p><p style={{ fontSize: '16px', fontWeight: '900', color: '#0f172a', margin: '0' }}>{formatCurrency(analysis.investimentoSolar)}</p></div>
+                                                <div><p style={{ fontSize: '8px', color: '#78716c', fontWeight: '700', margin: '0 0 4px 0' }}>PAYBACK</p><p style={{ fontSize: '16px', fontWeight: '900', color: '#0f172a', margin: '0' }}>{analysis.paybackMeses} meses</p></div>
+                                                <div><p style={{ fontSize: '8px', color: '#78716c', fontWeight: '700', margin: '0 0 4px 0' }}>IDEAL PARA</p><p style={{ fontSize: '10px', fontWeight: '600', color: '#78716c', margin: '0' }}>Empresas com capital ou crédito BNDES</p></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Opção C */}
+                                    <div style={{ border: '2px solid #06b6d4', borderRadius: '14px', marginBottom: '16px', overflow: 'hidden' }}>
+                                        <div style={{ background: '#ecfeff', padding: '20px 24px' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                                                <span style={{ fontSize: '10px', fontWeight: '900', color: '#164e63', letterSpacing: '3px' }}>OPÇÃO C</span>
+                                                <span style={{ fontSize: '14px', fontWeight: '800', color: '#164e63' }}>GD Compartilhada — Risco Zero</span>
+                                            </div>
+                                            <p style={{ fontSize: '11px', color: '#78716c', margin: '0 0 14px 0', lineHeight: '1.5' }}>
+                                                Assinatura de fazenda solar remota com desconto de ~15% na tarifa de energia. Sem investimento, sem obra, sem manutenção.
+                                            </p>
+                                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
+                                                <div><p style={{ fontSize: '8px', color: '#78716c', fontWeight: '700', margin: '0 0 4px 0' }}>ECONOMIA</p><p style={{ fontSize: '16px', fontWeight: '900', color: '#06b6d4', margin: '0' }}>{formatCurrency(analysis.economiaGDCompartilhada)}</p></div>
+                                                <div><p style={{ fontSize: '8px', color: '#78716c', fontWeight: '700', margin: '0 0 4px 0' }}>INVESTIMENTO</p><p style={{ fontSize: '16px', fontWeight: '900', color: '#0f172a', margin: '0' }}>R$ 0,00</p></div>
+                                                <div><p style={{ fontSize: '8px', color: '#78716c', fontWeight: '700', margin: '0 0 4px 0' }}>PRAZO</p><p style={{ fontSize: '16px', fontWeight: '900', color: '#0f172a', margin: '0' }}>Imediato</p></div>
+                                                <div><p style={{ fontSize: '8px', color: '#78716c', fontWeight: '700', margin: '0 0 4px 0' }}>IDEAL PARA</p><p style={{ fontSize: '10px', fontWeight: '600', color: '#78716c', margin: '0' }}>Sem risco e sem CAPEX</p></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Opção D (Mercado Livre) */}
+                                    {analysis.elegibilidadeACL && (
+                                        <div style={{ border: '2px solid #8b5cf6', borderRadius: '14px', overflow: 'hidden' }}>
+                                            <div style={{ background: '#f5f3ff', padding: '20px 24px' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                                                    <span style={{ fontSize: '10px', fontWeight: '900', color: '#4c1d95', letterSpacing: '3px' }}>OPÇÃO D</span>
+                                                    <span style={{ fontSize: '14px', fontWeight: '800', color: '#4c1d95' }}>Mercado Livre de Energia</span>
+                                                </div>
+                                                <p style={{ fontSize: '11px', color: '#78716c', margin: '0 0 14px 0', lineHeight: '1.5' }}>
+                                                    Migração para o Ambiente de Contratação Livre (ACL). Com demanda de {analysis.demandaContratada} kW, o cliente é elegível para comprar energia diretamente.
+                                                </p>
+                                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
+                                                    <div><p style={{ fontSize: '8px', color: '#78716c', fontWeight: '700', margin: '0 0 4px 0' }}>ECONOMIA</p><p style={{ fontSize: '16px', fontWeight: '900', color: '#8b5cf6', margin: '0' }}>{formatCurrency(analysis.economiaACL)}</p></div>
+                                                    <div><p style={{ fontSize: '8px', color: '#78716c', fontWeight: '700', margin: '0 0 4px 0' }}>INVESTIMENTO</p><p style={{ fontSize: '16px', fontWeight: '900', color: '#0f172a', margin: '0' }}>Baixo a Médio</p></div>
+                                                    <div><p style={{ fontSize: '8px', color: '#78716c', fontWeight: '700', margin: '0 0 4px 0' }}>PRAZO</p><p style={{ fontSize: '16px', fontWeight: '900', color: '#0f172a', margin: '0' }}>3-6 meses</p></div>
+                                                    <div><p style={{ fontSize: '8px', color: '#78716c', fontWeight: '700', margin: '0 0 4px 0' }}>IDEAL PARA</p><p style={{ fontSize: '10px', fontWeight: '600', color: '#78716c', margin: '0' }}>Grupo A ≥ 75 kW</p></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+                                    <div style={{ position: 'absolute', bottom: '30px', left: '50px', right: '50px', borderTop: '1px solid #e2e8f0', paddingTop: '12px', display: 'flex', justifyContent: 'space-between' }}>
+                                        <p style={{ fontSize: '8px', color: '#94a3b8', margin: '0' }}>ENGER Analytics v4.0 — Proposta Comercial — {formData.nomeCliente || 'Cliente'}</p>
+                                        <p style={{ fontSize: '8px', color: '#94a3b8', margin: '0' }}>Página 7 de 8</p>
+                                    </div>
+                                </div>
+
+                                {/* ========== PÁGINA 8: PROJEÇÃO 5 ANOS + ENCERRAMENTO ========== */}
+                                <div style={{ width: '794px', minHeight: '1123px', background: '#ffffff', padding: '50px', boxSizing: 'border-box', position: 'relative' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '35px', paddingBottom: '20px', borderBottom: '3px solid #10b981' }}>
+                                        <div style={{ width: '4px', height: '32px', background: '#10b981', borderRadius: '2px' }}></div>
+                                        <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0f172a', margin: '0' }}>PROJEÇÃO FINANCEIRA — 5 ANOS</h2>
+                                    </div>
+                                    
+                                    {/* KPIs 5 anos */}
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '30px' }}>
+                                        <div style={{ background: '#0f172a', borderRadius: '14px', padding: '22px', textAlign: 'center' }}>
+                                            <p style={{ fontSize: '8px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: '700', margin: '0 0 8px 0' }}>Gasto em 5 Anos (Atual)</p>
+                                            <p style={{ fontSize: '26px', fontWeight: '900', color: '#ef4444', margin: '0' }}>{formatCurrency(analysis.custoTotal * 12 * 5)}</p>
+                                        </div>
+                                        <div style={{ background: '#0f172a', borderRadius: '14px', padding: '22px', textAlign: 'center' }}>
+                                            <p style={{ fontSize: '8px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: '700', margin: '0 0 8px 0' }}>Gasto em 5 Anos (Com Solar)</p>
+                                            <p style={{ fontSize: '26px', fontWeight: '900', color: '#10b981', margin: '0' }}>{formatCurrency((analysis.custoTotal - analysis.economiaSolar) * 12 * 5)}</p>
+                                        </div>
+                                        <div style={{ background: '#0f172a', borderRadius: '14px', padding: '22px', textAlign: 'center' }}>
+                                            <p style={{ fontSize: '8px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: '700', margin: '0 0 8px 0' }}>Economia Líquida</p>
+                                            <p style={{ fontSize: '26px', fontWeight: '900', color: '#10b981', margin: '0' }}>{formatCurrency(analysis.economiaSolar * 12 * 5)}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Tabela evolutiva */}
+                                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px', marginBottom: '40px' }}>
+                                        <thead>
+                                            <tr style={{ background: '#0f172a' }}>
+                                                {['', 'Ano 1', 'Ano 2', 'Ano 3', 'Ano 5'].map((h, i) => (
+                                                    <th key={i} style={{ padding: '12px 14px', color: '#ffffff', fontWeight: '700', textAlign: i === 0 ? 'left' : 'center', fontSize: '10px' }}>{h}</th>
+                                                ))}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {[['Custo Atual', '#ef4444'], ['Com Solar', '#10b981'], ['Economia Acum.', '#10b981']].map(([label, cor], ri) => (
+                                                <tr key={ri} style={{ background: ri % 2 === 0 ? '#f8fafc' : '#ffffff' }}>
+                                                    <td style={{ padding: '10px 14px', fontWeight: '700', color: '#0f172a' }}>{label}</td>
+                                                    {[1,2,3,5].map(ano => {
+                                                        const val = ri === 0 ? analysis.custoTotal * 12 * ano
+                                                            : ri === 1 ? (analysis.custoTotal - analysis.economiaSolar) * 12 * ano
+                                                            : analysis.economiaSolar * 12 * ano;
+                                                        return <td key={ano} style={{ padding: '10px 14px', textAlign: 'center', color: cor, fontWeight: ri === 2 ? '700' : '400' }}>{formatCurrency(val)}</td>;
+                                                    })}
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                    
+                                    {/* Encerramento institucional */}
+                                    <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)', borderRadius: '16px', padding: '30px', textAlign: 'center', marginTop: '20px' }}>
+                                        <div style={{ height: '4px', background: 'linear-gradient(90deg, #10b981, #06b6d4, #10b981)', borderRadius: '2px', width: '200px', margin: '0 auto 20px auto' }}></div>
+                                        <p style={{ fontSize: '20px', fontWeight: '800', color: '#ffffff', letterSpacing: '6px', margin: '0 0 6px 0' }}>ENGER</p>
+                                        <p style={{ fontSize: '12px', color: '#10b981', letterSpacing: '3px', margin: '0 0 16px 0' }}>ANALYTICS v4.0</p>
+                                        <p style={{ fontSize: '9px', color: '#64748b', margin: '0 0 4px 0' }}>Motor de Inteligência Tarifária — Resoluções Normativas ANEEL 1.000/2021</p>
+                                        <p style={{ fontSize: '9px', color: '#64748b', margin: '0 0 4px 0' }}>Valores estimados com base nas tarifas homologadas. Sujeitos à conferência mediante análise da fatura original.</p>
+                                        <p style={{ fontSize: '9px', color: '#64748b', margin: '0' }}>Documento gerado em {new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })} — Válido por 30 dias</p>
+                                    </div>
+                                    
+                                    <div style={{ position: 'absolute', bottom: '30px', left: '50px', right: '50px', borderTop: '1px solid #e2e8f0', paddingTop: '12px', display: 'flex', justifyContent: 'space-between' }}>
+                                        <p style={{ fontSize: '8px', color: '#94a3b8', margin: '0' }}>ENGER Analytics v4.0 — Proposta Comercial — {formData.nomeCliente || 'Cliente'}</p>
+                                        <p style={{ fontSize: '8px', color: '#94a3b8', margin: '0' }}>Página 8 de 8</p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    )}
+
+                    <style dangerouslySetInnerHTML={{__html: `
+                        @keyframes shimmer {
+                            100% { transform: translateX(100%); }
+                        }
+                        @keyframes fadeInUp {
+                            from { opacity: 0; transform: translateY(20px); }
+                            to { opacity: 1; transform: translateY(0); }
+                        }
+                        @keyframes countUp {
+                            from { opacity: 0; transform: scale(0.5); }
+                            to { opacity: 1; transform: scale(1); }
+                        }
+                        @keyframes gaugeNeedle {
+                            from { stroke-dasharray: 0 999; }
+                        }
+                        .animate-fade-in-up {
+                            animation: fadeInUp 0.6s ease-out forwards;
+                        }
+                    `}} />
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
+
+
+
